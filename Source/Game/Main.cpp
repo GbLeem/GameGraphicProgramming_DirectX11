@@ -36,11 +36,11 @@
 -----------------------------------------------------------------F-F*/
 INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ INT nCmdShow)
 {
-    //remove C4100 warning
+    //remove C4100 error
     UNREFERENCED_PARAMETER(lpCmdLine);
     UNREFERENCED_PARAMETER(hPrevInstance);
     
-    //initialize Window and Direct3D device
+    //initialization
     HRESULT InitWindow(_In_ HINSTANCE hInstance, _In_ INT nCmdShow);
     HRESULT InitDevice();
 
@@ -55,17 +55,15 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }    
 
-    // Main message loop
     MSG msg = { 0 };
-   
-    //Main Message Loop
+    
+    //main message loop
     while (WM_QUIT != msg.message)
     {
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-            //두 함수가 호출되면 WindowProc 호출된다.
         }
         else
         {
@@ -73,6 +71,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         }
     }
 
+    //destroy
     library::CleanupDevice();
 
     return static_cast<INT>(msg.wParam);

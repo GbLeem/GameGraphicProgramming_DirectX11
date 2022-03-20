@@ -5,9 +5,6 @@ namespace library
     /*--------------------------------------------------------------------
       Global Variables
     --------------------------------------------------------------------*/
-    /*--------------------------------------------------------------------
-      TODO: Initialize global variables (remove the comment)
-    --------------------------------------------------------------------*/
     HINSTANCE                       g_hInst = nullptr;
     HWND                            g_hWnd = nullptr;
 
@@ -16,7 +13,6 @@ namespace library
     ComPtr<ID3D11DeviceContext>     g_pImmediateContext;
     ComPtr<ID3D11DeviceContext1>    g_pImmediateContext1;
     ComPtr<IDXGISwapChain>          g_pSwapChain;
-    //ComPtr<IDXGISwapChain1>         g_pSwapChain1;
     ComPtr<ID3D11RenderTargetView>  g_pRenderTargetView;
     ComPtr<ID3D11Texture2D>         g_pBackBuffer;
     /*--------------------------------------------------------------------
@@ -59,14 +55,14 @@ namespace library
             break;
 
         default:
-            return DefWindowProc(hWnd, uMsg, wParam, lParam); //알아서 해줘..
+            return DefWindowProc(hWnd, uMsg, wParam, lParam); 
         }
         return 0;
     }
 
     HRESULT InitWindow(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
     {
-        //Register the Window Class
+        //register the window class
         WNDCLASSEX wcex = {};
         wcex.cbSize = sizeof(WNDCLASSEX);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -81,7 +77,6 @@ namespace library
         wcex.lpszClassName = PSZ_COURSE_TITLE;
         wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
 
-        //error handling
         if (!RegisterClassEx(&wcex))
         {
             DWORD dwError = GetLastError();
@@ -94,16 +89,16 @@ namespace library
             return E_FAIL;
         }
 
-        //Create Window 내가 원하는 컨셉으로 윈도우 만들기
+        //create window 
         g_hInst = hInstance;
         RECT rc = { 0,0,800,600 };
         AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-        g_hWnd = CreateWindowEx(0, PSZ_COURSE_TITLE, L"Game Graphics Programming Lab 01: Direct3D 11 Basics", WS_OVERLAPPEDWINDOW,
+        g_hWnd = CreateWindowEx(0, PSZ_COURSE_TITLE, L"Game Graphics Programming Lab 01: Direct3D 11 Basics",
+            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | CW_USEDEFAULT |WS_MINIMIZEBOX | CW_USEDEFAULT,
             CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top,
             nullptr, nullptr, hInstance, nullptr);
 
-        //error handling
         if (!g_hWnd)
         {
             DWORD dwError = GetLastError();
@@ -116,18 +111,10 @@ namespace library
             return E_FAIL;
         }
 
-        //Show 해야 보인다.
         ShowWindow(g_hWnd, nCmdShow);
 
         return S_OK;
     }
-
-    //InitDevice에서 해야할 것
-    /*create direct3d device and context
-     obtain dxgi factory from device
-     create swap chain
-     create render target view
-     setup the viewport*/
 
     HRESULT InitDevice()
     {
@@ -150,7 +137,7 @@ namespace library
         createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif 
 
-        //Create Device
+        //create device
         HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, lvl,
             _countof(lvl), D3D11_SDK_VERSION, &g_pd3dDevice, &fl, &g_pImmediateContext);
 
@@ -166,8 +153,7 @@ namespace library
             (void)g_pImmediateContext.As(&g_pImmediateContext1);
         }
         
-
-        // Obtain DXGI factory from device
+        //obtian DXGI factory from device
         ComPtr<IDXGIFactory1>dxgiFactory;
         {
             ComPtr<IDXGIDevice> dxgiDevice;
@@ -183,8 +169,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-
-        // Create swap chain.
+        //create swap chain
         ComPtr<IDXGIAdapter> adapter;
         ComPtr<IDXGIFactory2> factory;
 
@@ -196,7 +181,7 @@ namespace library
         desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         desc.SampleDesc.Count = 1;      
-        desc.SampleDesc.Quality = 0;    //sampleDesc는 1,0
+        desc.SampleDesc.Quality = 0;   
         desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
         desc.OutputWindow = g_hWnd;
 
@@ -212,22 +197,20 @@ namespace library
             hr = factory->CreateSwapChain(g_pd3dDevice.Get(), &desc, &g_pSwapChain);
         }
 
-
-        //Create Render Target View
+        //create render target view
         hr = g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&g_pBackBuffer));
         if (FAILED(hr))
             return hr;
         
-        hr = g_pd3dDevice->CreateRenderTargetView(g_pBackBuffer.Get(), nullptr, g_pRenderTargetView.GetAddressOf()); //device 대장장이
-        //GetAddressOf() 써야지 오류 안난다.
-
+        //use GetAddressOf 
+        hr = g_pd3dDevice->CreateRenderTargetView(g_pBackBuffer.Get(), nullptr, g_pRenderTargetView.GetAddressOf()); //device
         if (FAILED(hr))
             return hr;
         
-        g_pImmediateContext->OMSetRenderTargets(1, g_pRenderTargetView.GetAddressOf(), nullptr);//context 머슴
+        g_pImmediateContext->OMSetRenderTargets(1, g_pRenderTargetView.GetAddressOf(), nullptr); //context
         
 
-        // Setup the viewport 모니터 뒤의 3D공간 만들기
+        //setup viewport
         D3D11_VIEWPORT vp;
         vp.Width = (FLOAT)width;
         vp.Height = (FLOAT)height;
@@ -236,7 +219,7 @@ namespace library
         vp.TopLeftX = 0.0f;
         vp.TopLeftY = 0.0f;
         
-        g_pImmediateContext->RSSetViewports(1, &vp); //세팅은 context
+        g_pImmediateContext->RSSetViewports(1, &vp); //by context
         
         return S_OK;
     }
@@ -248,14 +231,14 @@ namespace library
         if(g_pImmediateContext) g_pImmediateContext->Release();
         if(g_pImmediateContext1) g_pImmediateContext1->Release();
         if(g_pSwapChain) g_pSwapChain->Release();
-        //if(g_pSwapChain1) g_pSwapChain1->Release();
         if(g_pRenderTargetView) g_pRenderTargetView->Release();
         if(g_pBackBuffer) g_pBackBuffer->Release();
     }
 
     void Render()
     {
-        g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView.Get(), Colors::MidnightBlue); //Get() 해주는 것의 역할은?
-        g_pSwapChain->Present(0, 0); //렌더타겟뷰는 back buffer랑 연결되어있으니까 swap chain으로 바꿔주기(보이는 화면은 front buffer)
+        //use Get()
+        g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView.Get(), Colors::MidnightBlue); 
+        g_pSwapChain->Present(0, 0); //swap (back <-> front)
     }
 }
