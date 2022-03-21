@@ -226,13 +226,13 @@ namespace library
 
     void CleanupDevice()
     {
-        if(g_pd3dDevice) g_pd3dDevice->Release();
-        if(g_pd3dDevice1) g_pd3dDevice1->Release();
-        if(g_pImmediateContext) g_pImmediateContext->Release();
-        if(g_pImmediateContext1) g_pImmediateContext1->Release();
-        if(g_pSwapChain) g_pSwapChain->Release();
-        if(g_pRenderTargetView) g_pRenderTargetView->Release();
-        if(g_pBackBuffer) g_pBackBuffer->Release();
+        if (g_pd3dDevice) g_pd3dDevice.Reset();
+        if(g_pd3dDevice1) g_pd3dDevice1.Reset();
+        if(g_pImmediateContext) g_pImmediateContext.Reset();
+        if(g_pImmediateContext1) g_pImmediateContext1.Reset();
+        if(g_pSwapChain) g_pSwapChain.Reset();
+        if(g_pRenderTargetView) g_pRenderTargetView.Reset();
+        if(g_pBackBuffer) g_pBackBuffer.Reset();
     }
 
     void Render()
