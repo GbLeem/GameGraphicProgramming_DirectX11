@@ -16,6 +16,12 @@
     <Filter Include="Source Files\Game">
       <UniqueIdentifier>{9f92e72f-5b89-4dbe-980f-e3f1715611b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{945c57bc-b6db-4eb7-ab66-3fe2609119ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{f97e4e1a-9857-46d4-a74b-b5c8eab54628}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -26,6 +32,15 @@
     </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>Source Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderer.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BaseWindow.h">
+      <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\MainWindow.h">
+      <Filter>Source Files\Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +56,12 @@
   <ItemGroup>
     <ClCompile Include="Game\Game.cpp">
       <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Renderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\MainWindow.cpp">
+      <Filter>Source Files\Window</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
