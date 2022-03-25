@@ -11,9 +11,6 @@ namespace library
                   m_immediateContext, m_immediateContext1, m_swapChain, 
                   m_swapChain1, m_renderTargetView].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Renderer definition (remove the comment)
-    --------------------------------------------------------------------*/
     Renderer::Renderer()
     {
         m_driverType = D3D_DRIVER_TYPE_HARDWARE;
@@ -42,9 +39,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Renderer::Initialize(_In_ HWND hWnd)
     {
         RECT rc;
@@ -143,9 +137,6 @@ namespace library
 
       Summary:  Render the frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderer::Render()
     {   
         m_immediateContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::MidnightBlue); 

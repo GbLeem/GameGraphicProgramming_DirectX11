@@ -94,9 +94,6 @@ namespace library
         Returns:  LRESULT
                     Integer value that your program returns to Windows
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::WindowProc definition (remove the comment)
-    --------------------------------------------------------------------*/
     template<class DerivedType>
     LRESULT BaseWindow<DerivedType>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
@@ -126,9 +123,6 @@ namespace library
 
         Modifies: [m_hInstance, m_hWnd, m_pszWindowName].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::BaseWindow definition (remove the comment)
-    --------------------------------------------------------------------*/
     template<class DerivedType>
     inline BaseWindow<DerivedType>::BaseWindow()
     {
@@ -144,9 +138,6 @@ namespace library
         Returns:  HWND
                     The handle to the window
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::GetWindow definition (remove the comment)
-    --------------------------------------------------------------------*/
     template<class DerivedType>
     inline HWND BaseWindow<DerivedType>::GetWindow() const
     {
@@ -187,9 +178,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
     template<class DerivedType>
     HRESULT BaseWindow<DerivedType>::initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow, _In_ PCWSTR pszWindowName, _In_ DWORD dwStyle, 
         _In_opt_ INT x, _In_opt_ INT y, _In_opt_ INT nWidth, _In_opt_ INT nHeight, _In_opt_ HWND hWndParent, _In_opt_ HMENU hMenu)
@@ -224,7 +212,6 @@ namespace library
         }
 
         //create window
-        dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
         nWidth = 800;
         nHeight = 600;
         m_hWnd = CreateWindowEx(0, GetWindowClassName(), pszWindowName, dwStyle, x, y, nWidth, nHeight,
