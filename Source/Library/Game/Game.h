@@ -34,7 +34,7 @@ namespace library
                 ~Game
                   Destructor.
     C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-    class Game final
+    class Game final 
     {
     public:
         Game(_In_ PCWSTR pszGameName);

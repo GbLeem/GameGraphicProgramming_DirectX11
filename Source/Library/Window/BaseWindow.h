@@ -97,13 +97,26 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: BaseWindow<DerivedType>::WindowProc definition (remove the comment)
     --------------------------------------------------------------------*/
-
     template<class DerivedType>
-    inline LRESULT BaseWindow<DerivedType>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    LRESULT BaseWindow<DerivedType>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        HandleMessage(uMsg, wParam, lParam);
-       
-        return LRESULT();
+        DerivedType *pThis = nullptr;
+        if(uMsg == WM_NCCREATE)
+        {
+            CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+            pThis = reinterpret_cast<DerivedType*>(pCreate->lpCreateParams);
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
+            pThis->m_hWnd = hWnd;
+        }
+        else
+        {
+            pThis = reinterpret_cast<DerivedType*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        }
+
+        if (pThis)
+            return pThis->HandleMessage(uMsg, wParam, lParam);
+        else
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -119,7 +132,9 @@ namespace library
     template<class DerivedType>
     inline BaseWindow<DerivedType>::BaseWindow()
     {
-        BaseWindow();
+        m_hInstance = nullptr;
+        m_hWnd = nullptr;
+        m_pszWindowName = L"Game Graphics Programming Lab 02: Object Oriented Design";
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
         Method:   BaseWindow<DerivedType>::GetWindow()
@@ -135,7 +150,7 @@ namespace library
     template<class DerivedType>
     inline HWND BaseWindow<DerivedType>::GetWindow() const
     {
-        return HWND();
+        return m_hWnd;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -176,9 +191,60 @@ namespace library
       TODO: BaseWindow<DerivedType>::initialize definition (remove the comment)
     --------------------------------------------------------------------*/
     template<class DerivedType>
-    inline HRESULT BaseWindow<DerivedType>::initialize(HINSTANCE hInstance, INT nCmdShow, PCWSTR pszWindowName, DWORD dwStyle, INT x, INT y, INT nWidth, INT nHeight, HWND hWndParent, HMENU hMenu)
+    HRESULT BaseWindow<DerivedType>::initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow, _In_ PCWSTR pszWindowName, _In_ DWORD dwStyle, 
+        _In_opt_ INT x, _In_opt_ INT y, _In_opt_ INT nWidth, _In_opt_ INT nHeight, _In_opt_ HWND hWndParent, _In_opt_ HMENU hMenu)
     {
-        return E_NOTIMPL;
-    }
+        //Register the Window Class
 
+        WNDCLASSEX wcex = { 0 };
+        wcex.hInstance = hInstance;
+        wcex.lpfnWndProc = WindowProc;
+        wcex.lpszClassName = GetWindowClassName();
+        
+        wcex.cbSize = sizeof(WNDCLASSEX);
+        wcex.style = CS_HREDRAW | CS_VREDRAW;
+        wcex.cbClsExtra = 0;
+        wcex.cbWndExtra = 0;
+        wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
+        wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+        wcex.lpszMenuName = nullptr;
+        wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+
+        if (!RegisterClassEx(&wcex))
+        {
+            DWORD dwError = GetLastError();
+
+            MessageBox(nullptr, L"Call to RegisterClassEx failed", L"Game Graphics Programming", NULL);
+
+            if (dwError != ERROR_CLASS_ALREADY_EXISTS)
+                return HRESULT_FROM_WIN32(dwError);
+
+            return E_FAIL;
+        }
+
+        //create window
+        dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+        nWidth = 800;
+        nHeight = 600;
+        m_hWnd = CreateWindowEx(0, GetWindowClassName(), pszWindowName, dwStyle, x, y, nWidth, nHeight,
+            hWndParent, hMenu, hInstance, this);
+
+        //error handling
+        if (!m_hWnd)
+        {
+            DWORD dwError = GetLastError();
+
+            MessageBox(nullptr, L"Call to CreateWindowEx failed", L"Game Graphics Programming", NULL);
+
+            if (dwError != ERROR_CLASS_ALREADY_EXISTS)
+                return HRESULT_FROM_WIN32(dwError);
+
+            return E_FAIL;
+        }
+
+        ShowWindow(m_hWnd, nCmdShow);
+
+        return S_OK;
+    }
 }

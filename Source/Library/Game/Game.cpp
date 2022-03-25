@@ -15,8 +15,11 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Game::Game definition (remove the comment)
     --------------------------------------------------------------------*/
-	Game::Game(PCWSTR pszGameName)
+	Game::Game(_In_ PCWSTR pszGameName)
 	{
+		m_pszGameName = pszGameName;
+		m_mainWindow = std::make_unique<MainWindow>();
+		m_renderer = std::make_unique<Renderer>();
 	}
 
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -38,9 +41,18 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Game::Initialize definition (remove the comment)
     --------------------------------------------------------------------*/
-	HRESULT Game::Initialize(HINSTANCE hInstance, INT nCmdShow)
+	HRESULT Game::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
 	{
-		return E_NOTIMPL;
+		//initialize window first, then device
+		if (FAILED(m_mainWindow->Initialize(hInstance, nCmdShow, m_pszGameName)))
+		{
+			return 0;
+		}
+
+		if (FAILED(m_renderer->Initialize(m_mainWindow->GetWindow())))
+		{
+			return 0;
+		}
 	}
 
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -56,6 +68,20 @@ namespace library
     --------------------------------------------------------------------*/
 	INT Game::Run()
 	{
+		MSG msg = { 0 };
+
+		while (WM_QUIT != msg.message)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				m_renderer->Render();
+			}
+		}
 		return 0;
 	}
 
@@ -74,6 +100,6 @@ namespace library
 
 	PCWSTR Game::GetGameName() const
 	{
-		return PCWSTR();
+		return m_pszGameName;
 	}
 }

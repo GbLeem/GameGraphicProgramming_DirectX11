@@ -21,9 +21,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: MainWindow::Initialize definition (remove the comment)
     --------------------------------------------------------------------*/
-    HRESULT MainWindow::Initialize(HINSTANCE hInstance, INT nCmdShow, PCWSTR pszWindowName)
+    HRESULT MainWindow::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow, _In_ PCWSTR pszWindowName)
     {
-        return E_NOTIMPL;
+        initialize(hInstance, nCmdShow, pszWindowName, CW_DEFAULT);
+        return 0;
     }
    
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -39,7 +40,7 @@ namespace library
     --------------------------------------------------------------------*/
     PCWSTR MainWindow::GetWindowClassName() const
     {
-        return PCWSTR();
+        return L"WindowClassName";
     }
    
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -60,9 +61,24 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: MainWindow::HandleMessage definition (remove the comment)
     --------------------------------------------------------------------*/
-    LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+    LRESULT MainWindow::HandleMessage(_In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
     {
+        switch (uMsg)
+        {
+        case WM_CLOSE:
+            if (MessageBox(m_hWnd, L"Really Quit?", L"Game Graphics Programming", MB_OKCANCEL) == IDOK)
+            {
+                DestroyWindow(m_hWnd);
+            }
+            return 0;
 
-        return LRESULT();
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            break;
+
+        default:
+            return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
+        }
+        return 0;
     }
 }
