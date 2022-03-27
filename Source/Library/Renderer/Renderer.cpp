@@ -90,7 +90,7 @@ namespace library
         desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         desc.SampleDesc.Count = 1;
-        desc.SampleDesc.Quality = 0;    //sampleDesc´Â 1,0
+        desc.SampleDesc.Quality = 0;    
         desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
         desc.OutputWindow = hWnd;
 

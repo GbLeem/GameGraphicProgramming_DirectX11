@@ -26,7 +26,7 @@ namespace library
 
 	  Args:     HINSTANCE hInstance
 	  			  Handle to the instance
-				INT nCmdShows
+				INT nCmdShow
 				  Is a flag that says whether the main application window
 				  will be minimized, maximized, or shown normally
 
@@ -38,7 +38,7 @@ namespace library
 	HRESULT Game::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
 	{
 		//initialize window first, then device
-		if (FAILED(m_mainWindow->Initialize(hInstance, nCmdShow, m_pszGameName)))
+		if (FAILED(m_mainWindow->Initialize(hInstance, nCmdShow, GetGameName())))
 		{
 			return 0;
 		}

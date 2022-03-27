@@ -183,7 +183,6 @@ namespace library
         _In_opt_ INT x, _In_opt_ INT y, _In_opt_ INT nWidth, _In_opt_ INT nHeight, _In_opt_ HWND hWndParent, _In_opt_ HMENU hMenu)
     {
         //Register the Window Class
-
         WNDCLASSEX wcex = { 0 };
         wcex.hInstance = hInstance;
         wcex.lpfnWndProc = WindowProc;
@@ -198,7 +197,7 @@ namespace library
         wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
         wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
-
+       
         if (!RegisterClassEx(&wcex))
         {
             DWORD dwError = GetLastError();
