@@ -94,11 +94,14 @@ namespace library
         Returns:  LRESULT
                     Integer value that your program returns to Windows
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: BaseWindow<DerivedType>::WindowProc definition (remove the comment)
+    --------------------------------------------------------------------*/
     template<class DerivedType>
     LRESULT BaseWindow<DerivedType>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        DerivedType *pThis = nullptr;
-        if(uMsg == WM_NCCREATE)
+        DerivedType* pThis = nullptr;
+        if (uMsg == WM_NCCREATE)
         {
             CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
             pThis = reinterpret_cast<DerivedType*>(pCreate->lpCreateParams);
@@ -115,7 +118,6 @@ namespace library
         else
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
-
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
         Method:   BaseWindow<DerivedType>::BaseWindow
 
@@ -123,13 +125,17 @@ namespace library
 
         Modifies: [m_hInstance, m_hWnd, m_pszWindowName].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: BaseWindow<DerivedType>::BaseWindow definition (remove the comment)
+    --------------------------------------------------------------------*/
     template<class DerivedType>
     inline BaseWindow<DerivedType>::BaseWindow()
+        :m_hInstance(nullptr),
+        m_hWnd(nullptr),
+        m_pszWindowName(L"")
     {
-        m_hInstance = nullptr;
-        m_hWnd = nullptr;
-        m_pszWindowName = L"Game Graphics Programming Lab 02: Object Oriented Design";
     }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
         Method:   BaseWindow<DerivedType>::GetWindow()
 
@@ -138,6 +144,11 @@ namespace library
         Returns:  HWND
                     The handle to the window
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: BaseWindow<DerivedType>::GetWindow definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+
     template<class DerivedType>
     inline HWND BaseWindow<DerivedType>::GetWindow() const
     {
@@ -178,16 +189,21 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: BaseWindow<DerivedType>::initialize definition (remove the comment)
+    --------------------------------------------------------------------*/
+
     template<class DerivedType>
-    HRESULT BaseWindow<DerivedType>::initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow, _In_ PCWSTR pszWindowName, _In_ DWORD dwStyle, 
-        _In_opt_ INT x, _In_opt_ INT y, _In_opt_ INT nWidth, _In_opt_ INT nHeight, _In_opt_ HWND hWndParent, _In_opt_ HMENU hMenu)
+    HRESULT BaseWindow<DerivedType>::initialize(HINSTANCE hInstance, INT nCmdShow, PCWSTR pszWindowName, DWORD dwStyle, 
+        INT x, INT y, INT nWidth, INT nHeight, HWND hWndParent, HMENU hMenu)
     {
+
         //Register the Window Class
         WNDCLASSEX wcex = { 0 };
         wcex.hInstance = hInstance;
         wcex.lpfnWndProc = WindowProc;
         wcex.lpszClassName = GetWindowClassName();
-        
+
         wcex.cbSize = sizeof(WNDCLASSEX);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         wcex.cbClsExtra = 0;
@@ -197,7 +213,7 @@ namespace library
         wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
         wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
-       
+
         if (!RegisterClassEx(&wcex))
         {
             DWORD dwError = GetLastError();
@@ -209,10 +225,8 @@ namespace library
 
             return E_FAIL;
         }
-
+        
         //create window
-        nWidth = 800;
-        nHeight = 600;
         m_hWnd = CreateWindowEx(0, GetWindowClassName(), pszWindowName, dwStyle, x, y, nWidth, nHeight,
             hWndParent, hMenu, hInstance, this);
 

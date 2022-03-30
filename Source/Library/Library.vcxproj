@@ -29,6 +29,13 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Window\MainWindow.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Lab03.fxh" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Lab03_PS.hlsl" />
+    <FxCompile Include="Shaders\Lab03_VS.hlsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -89,6 +96,12 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
     <Lib>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -114,6 +127,12 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     <Lib>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

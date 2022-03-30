@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Window">
       <UniqueIdentifier>{f97e4e1a-9857-46d4-a74b-b5c8eab54628}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{c7d8d162-20a2-4485-86e7-600fc6405fe7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -63,5 +66,18 @@
     <ClCompile Include="Window\MainWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Lab03.fxh">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Lab03_PS.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Lab03_VS.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
