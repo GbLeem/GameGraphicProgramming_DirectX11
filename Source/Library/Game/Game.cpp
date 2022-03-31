@@ -41,8 +41,6 @@ namespace library
       TODO: Game::Initialize definition (remove the comment)
     --------------------------------------------------------------------*/
 
-
-
 	HRESULT Game::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
 	{
 		//initialize window first, then device
