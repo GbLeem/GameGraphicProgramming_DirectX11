@@ -12,9 +12,6 @@ namespace library
                   m_swapChain1, m_renderTargetView, m_vertexShader,
                   m_pixelShader, m_vertexLayout, m_vertexBuffer].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Renderer definition (remove the comment)
-    --------------------------------------------------------------------*/
     Renderer::Renderer()
         :m_driverType(D3D_DRIVER_TYPE_HARDWARE),
         m_featureLevel(D3D_FEATURE_LEVEL_11_1),
@@ -48,9 +45,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
 
     HRESULT Renderer::Initialize(_In_ HWND hWnd)
     {
@@ -100,7 +94,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        // Obtain DXGI factory from device 
+        //Obtain DXGI factory from device 
         ComPtr<IDXGIFactory1> dxgiFactory;
         {
             ComPtr<IDXGIDevice> dxgiDevice;
@@ -122,7 +116,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        // Create swap chain
+        //Create swap chain
         ComPtr<IDXGIFactory2> dxgiFactory2(nullptr);
 
         hr = dxgiFactory.As(&dxgiFactory2);
@@ -136,39 +130,41 @@ namespace library
                 (void)m_immediateContext.As(&m_immediateContext1);
             }
 
-            DXGI_SWAP_CHAIN_DESC1 sd = {};
-           
-            sd.Width = width;
-            sd.Height = height;
-            sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            sd.SampleDesc.Count = 1;
-            sd.SampleDesc.Quality = 0;
-            sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-            sd.BufferCount = 1;
+            DXGI_SWAP_CHAIN_DESC1 sd = 
+            {
+                .Width = width,
+                .Height = height,
+                .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
+                .SampleDesc = {.Count = 1, .Quality = 0},
+                .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+                .BufferCount = 1
+            };
 
             hr = dxgiFactory2->CreateSwapChainForHwnd(m_d3dDevice.Get(), hWnd, &sd, nullptr, nullptr, m_swapChain1.GetAddressOf());
             if (SUCCEEDED(hr))
             {
                 hr = m_swapChain1.As(&m_swapChain);
             }
-
             dxgiFactory2.Reset();
         }
         else
         {
-            DXGI_SWAP_CHAIN_DESC sd = {};
-            sd.BufferCount = 1;
-            sd.BufferDesc.Width = width;
-            sd.BufferDesc.Height = height;
-            sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            sd.BufferDesc.RefreshRate.Numerator = 60;
-            sd.BufferDesc.RefreshRate.Denominator = 1;
-            sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-            sd.OutputWindow = hWnd;
-            sd.SampleDesc.Count = 1;
-            sd.SampleDesc.Quality = 0;
-            sd.Windowed = TRUE;
-             
+            DXGI_SWAP_CHAIN_DESC sd =
+            {
+                .BufferDesc =
+                {
+                    .Width = width,
+                    .Height = height,
+                    .RefreshRate ={.Numerator = 60, .Denominator = 1 },
+                    .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
+                },
+                .SampleDesc = {.Count = 1, .Quality = 0},
+                .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+                .BufferCount = 1,
+                .OutputWindow = hWnd,
+                .Windowed = TRUE,
+            };
+
             hr = dxgiFactory->CreateSwapChain(m_d3dDevice.Get(), &sd, m_swapChain.GetAddressOf());
         }
 
@@ -207,10 +203,9 @@ namespace library
         vp.TopLeftX = 0;
         vp.TopLeftY = 0;
         m_immediateContext->RSSetViewports(1, &vp);
-
-
-        //==============================================
         
+        //====Vertex Shader====
+
         //Compile the vertex shader 
         ComPtr<ID3DBlob> pVSBlob(nullptr);
         hr = compileShaderFromFile(L"../Library/Shaders/Lab03.fxh", "VS", "vs_5_0", pVSBlob.GetAddressOf());
@@ -224,7 +219,8 @@ namespace library
 
         //Create the vertex shader
         hr = m_d3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, m_vertexShader.GetAddressOf());
-        if (FAILED(hr))
+        
+if (FAILED(hr))
             return hr;
 
         //Define the input layout
@@ -242,8 +238,7 @@ namespace library
         UINT uNumElements = ARRAYSIZE(aLayouts);
 
         //Create the input layout
-        hr = m_d3dDevice->CreateInputLayout(aLayouts, uNumElements, pVSBlob->GetBufferPointer(),
-            pVSBlob->GetBufferSize(), m_vertexLayout.GetAddressOf());
+        hr = m_d3dDevice->CreateInputLayout(aLayouts, uNumElements, pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), m_vertexLayout.GetAddressOf());
 
         if (FAILED(hr))
             return hr;
@@ -251,6 +246,7 @@ namespace library
         //Set input layout
         m_immediateContext->IASetInputLayout(m_vertexLayout.Get());
 
+        //====Pixel Shader====
 
         //Compile the pixel shader
         ComPtr<ID3DBlob> pPSBlob(nullptr);
@@ -269,6 +265,8 @@ namespace library
         if (FAILED(hr))
             return hr;
 
+        //====Vertex Buffer====
+
         //Create a Vertex Buffer
         SimpleVertex aVertices[] =
         {
@@ -277,18 +275,21 @@ namespace library
             { XMFLOAT3( -0.5f, -0.5f, 0.5f ) },
         };
 
-        D3D11_BUFFER_DESC bd = {};
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(SimpleVertex) * 3;
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bd.CPUAccessFlags = 0;
-        bd.MiscFlags = 0;
+        D3D11_BUFFER_DESC bd = 
+        {
+            .ByteWidth = sizeof(SimpleVertex) * 3,
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_VERTEX_BUFFER,
+            .CPUAccessFlags = 0,
+            .MiscFlags = 0
+        };
 
-        D3D11_SUBRESOURCE_DATA initData = {};
-
-        initData.pSysMem = aVertices;
-        initData.SysMemPitch = 0;
-        initData.SysMemSlicePitch = 0;
+        D3D11_SUBRESOURCE_DATA initData = 
+        {
+            .pSysMem = aVertices,
+            .SysMemPitch = 0,
+            .SysMemSlicePitch = 0
+        };
 
         hr = m_d3dDevice->CreateBuffer(&bd, &initData, m_vertexBuffer.GetAddressOf());
         
@@ -299,12 +300,9 @@ namespace library
         UINT uStride = sizeof(SimpleVertex);
         UINT uOffset = 0;
         m_immediateContext->IASetVertexBuffers(0u, 1u, m_vertexBuffer.GetAddressOf(), &uStride, &uOffset);
-
-        //Set topology
-        m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         
-        //==============================================================
-
+        //====Index Buffer====
+        
         //Create an Index Buffer
         ComPtr<ID3D11Buffer> pIndexBuffer(nullptr);
 
@@ -313,18 +311,21 @@ namespace library
             0,1,2
         };
 
-        D3D11_BUFFER_DESC bd2 = {};
-        bd2.Usage = D3D11_USAGE_DEFAULT;
-        bd2.ByteWidth = sizeof(WORD) * 3;
-        bd2.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bd2.CPUAccessFlags = 0;
-        bd2.MiscFlags = 0;
+        D3D11_BUFFER_DESC bd2 = 
+        {
+            .ByteWidth = sizeof(WORD) * 3,
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_INDEX_BUFFER,
+            .CPUAccessFlags = 0,
+            .MiscFlags = 0
+        };
           
-        D3D11_SUBRESOURCE_DATA initData2 = {};
-
-        initData2.pSysMem = aIndices;
-        initData2.SysMemPitch = 0;
-        initData2.SysMemSlicePitch = 0;
+        D3D11_SUBRESOURCE_DATA initData2 = 
+        {
+            .pSysMem = aIndices,
+            .SysMemPitch = 0,
+            .SysMemSlicePitch = 0,
+        };
 
         hr = m_d3dDevice->CreateBuffer(&bd2, &initData2, &pIndexBuffer);
 
@@ -334,6 +335,7 @@ namespace library
         //set index buffer
         m_immediateContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
+        //Set primitive topology
         m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         return S_OK;
@@ -344,19 +346,20 @@ namespace library
 
       Summary:  Render the frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Render definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderer::Render()
     {
         m_immediateContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::MidnightBlue);
 
-        ////Setting the Shaders
+        //Setting the Shaders
         m_immediateContext->VSSetShader(m_vertexShader.Get(), nullptr, 0);
         m_immediateContext->PSSetShader(m_pixelShader.Get(), nullptr, 0);
 
-        m_immediateContext->Draw(3, 0);
-        //m_immediateContext->DrawIndexed(3, 0, 0);
+        //Draw Use non-Indexed array
+        m_immediateContext->Draw(3, 0u);
+
+        //Draw Use Indexed array
+        m_immediateContext->DrawIndexed(3, 0u, 0u);
+
         m_swapChain->Present(0, 0);
     }
 
@@ -385,12 +388,9 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::compileShaderFromFile definition (remove the comment)
-    --------------------------------------------------------------------*/
-
     HRESULT Renderer::compileShaderFromFile(_In_ PCWSTR pszFileName, _In_ PCSTR pszEntryPoint, _In_ PCSTR szShaderModel, _Outptr_ ID3DBlob** ppBlobOut)
     {
+        HRESULT hr = S_OK;
         DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 
 #if defined (DEBUG) || defined (_DEBUG)
@@ -399,18 +399,13 @@ namespace library
 #endif     
 
         ComPtr<ID3DBlob> pErrorBlob(nullptr);
-        HRESULT hr = D3DCompileFromFile(pszFileName, nullptr, nullptr, pszEntryPoint, szShaderModel, dwShaderFlags, 0u, ppBlobOut, pErrorBlob.GetAddressOf());
+        hr = D3DCompileFromFile(pszFileName, nullptr, nullptr, pszEntryPoint, szShaderModel, dwShaderFlags, 0u, ppBlobOut, pErrorBlob.GetAddressOf());
 
         if (FAILED(hr))
-        {
-            if (pErrorBlob)
-            {
-                OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
-                pErrorBlob.Reset();
-            }
             return hr;
-        }
-        if (pErrorBlob) pErrorBlob.Reset();
+        
+        if (pErrorBlob) 
+            pErrorBlob.Reset();
 
         return S_OK;
     }

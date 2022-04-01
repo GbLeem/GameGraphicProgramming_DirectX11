@@ -94,9 +94,6 @@ namespace library
         Returns:  LRESULT
                     Integer value that your program returns to Windows
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::WindowProc definition (remove the comment)
-    --------------------------------------------------------------------*/
     template<class DerivedType>
     LRESULT BaseWindow<DerivedType>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
@@ -125,9 +122,6 @@ namespace library
 
         Modifies: [m_hInstance, m_hWnd, m_pszWindowName].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::BaseWindow definition (remove the comment)
-    --------------------------------------------------------------------*/
     template<class DerivedType>
     inline BaseWindow<DerivedType>::BaseWindow()
         :m_hInstance(nullptr),
@@ -144,11 +138,6 @@ namespace library
         Returns:  HWND
                     The handle to the window
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::GetWindow definition (remove the comment)
-    --------------------------------------------------------------------*/
-
-
     template<class DerivedType>
     inline HWND BaseWindow<DerivedType>::GetWindow() const
     {
@@ -189,30 +178,26 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: BaseWindow<DerivedType>::initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
-
     template<class DerivedType>
     HRESULT BaseWindow<DerivedType>::initialize(HINSTANCE hInstance, INT nCmdShow, PCWSTR pszWindowName, DWORD dwStyle, 
         INT x, INT y, INT nWidth, INT nHeight, HWND hWndParent, HMENU hMenu)
     {
-
         //Register the Window Class
-        WNDCLASSEX wcex = { 0 };
-        wcex.hInstance = hInstance;
-        wcex.lpfnWndProc = WindowProc;
-        wcex.lpszClassName = GetWindowClassName();
-
-        wcex.cbSize = sizeof(WNDCLASSEX);
-        wcex.style = CS_HREDRAW | CS_VREDRAW;
-        wcex.cbClsExtra = 0;
-        wcex.cbWndExtra = 0;
-        wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
-        wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-        wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        wcex.lpszMenuName = nullptr;
-        wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+        WNDCLASSEX wcex =
+        {
+            .cbSize = sizeof(WNDCLASSEX),
+            .style = CS_HREDRAW | CS_VREDRAW,
+            .lpfnWndProc = WindowProc,
+            .cbClsExtra = 0,
+            .cbWndExtra = 0,
+            .hInstance = hInstance,
+            .hIcon = LoadIcon(hInstance, IDI_APPLICATION),
+            .hCursor = LoadCursor(nullptr, IDC_ARROW),
+            .hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1),
+            .lpszMenuName = nullptr,
+            .lpszClassName = GetWindowClassName(),
+            .hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION)
+        };
 
         if (!RegisterClassEx(&wcex))
         {
