@@ -22,14 +22,11 @@
     <Filter Include="Source Files\Window">
       <UniqueIdentifier>{f97e4e1a-9857-46d4-a74b-b5c8eab54628}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shaders">
+    <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{c7d8d162-20a2-4485-86e7-600fc6405fe7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -44,6 +41,24 @@
     </ClInclude>
     <ClInclude Include="Window\MainWindow.h">
       <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\DataTypes.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderable.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\PixelShader.h">
+      <Filter>Source Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\Shader.h">
+      <Filter>Source Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\VertexShader.h">
+      <Filter>Source Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -66,18 +81,17 @@
     <ClCompile Include="Window\MainWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Lab03.fxh">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\Lab03_PS.hlsl">
-      <Filter>Source Files\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\Lab03_VS.hlsl">
-      <Filter>Source Files\Shaders</Filter>
-    </FxCompile>
+    <ClCompile Include="Renderer\Renderable.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\PixelShader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\Shader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\VertexShader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
