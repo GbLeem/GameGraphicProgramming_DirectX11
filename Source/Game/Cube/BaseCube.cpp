@@ -13,15 +13,10 @@
   Returns:  HRESULT
               Status code
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-/*--------------------------------------------------------------------
-  TODO: BaseCube::Initialize definition (remove the comment)
---------------------------------------------------------------------*/
 HRESULT BaseCube::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
 {
-    return E_NOTIMPL;
+    return initialize(pDevice, pImmediateContext);
 }
-
-
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::GetNumVertices
@@ -31,13 +26,11 @@ HRESULT BaseCube::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContex
   Returns:  UINT
               Number of vertices
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-/*--------------------------------------------------------------------
-  TODO: BaseCube::GetNumVertices definition (remove the comment)
---------------------------------------------------------------------*/
 UINT BaseCube::GetNumVertices() const
 {
-    return 0;
+    return NUM_VERTICES;
 }
+
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::GetNumIndices
 
@@ -46,14 +39,10 @@ UINT BaseCube::GetNumVertices() const
   Returns:  UINT
               Number of indices
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-/*--------------------------------------------------------------------
-  TODO: BaseCube::GetNumIndices definition (remove the comment)
---------------------------------------------------------------------*/
 UINT BaseCube::GetNumIndices() const
 {
-    return 0;
+    return NUM_INDICES;
 }
-
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::getVertices
@@ -63,14 +52,11 @@ UINT BaseCube::GetNumIndices() const
   Returns:  const library::SimpleVertex*
               Pointer to the vertices data
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-/*--------------------------------------------------------------------
-  TODO: BaseCube::getVertices definition (remove the comment)
---------------------------------------------------------------------*/
-
 const library::SimpleVertex* BaseCube::getVertices() const
 {
-    return nullptr;
+    return VERTICES;
 }
+
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::getIndices
 
@@ -79,11 +65,8 @@ const library::SimpleVertex* BaseCube::getVertices() const
   Returns:  const WORD*
               Pointer to the indices data
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-/*--------------------------------------------------------------------
-  TODO: BaseCube::getIndices definition (remove the comment)
---------------------------------------------------------------------*/
 const WORD* BaseCube::getIndices() const
 {
-    return nullptr;
+    return INDICES;
 }
 

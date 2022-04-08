@@ -18,14 +18,11 @@ namespace library
 
       Modifies: [m_vertexShader].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: VertexShader::VertexShader definition (remove the comment)
-    --------------------------------------------------------------------*/
     VertexShader::VertexShader(_In_ PCWSTR pszFileName, _In_ PCSTR pszEntryPoint, _In_ PCSTR pszShaderModel)
-        :m_vertexShader(nullptr)
-        ,m_vertexLayout(nullptr)
+        :Shader(pszFileName, pszEntryPoint, pszShaderModel)
+        , m_vertexShader(nullptr)
+        , m_vertexLayout(nullptr)
     {
-        //??
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -39,10 +36,7 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: VertexShader::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
-    HRESULT VertexShader::Initialize(ID3D11Device* pDevice)
+    HRESULT VertexShader::Initialize(_In_ ID3D11Device* pDevice)
     {
         //Compile the vertex shader 
         ComPtr<ID3DBlob> pVSBlob(nullptr);
@@ -92,10 +86,6 @@ namespace library
       Returns:  ComPtr<ID3D11VertexShader>&
                   Vertex shader. Could be a nullptr
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: VertexShader::GetVertexShader definition (remove the comment)
-    --------------------------------------------------------------------*/
-
     ComPtr<ID3D11VertexShader>& VertexShader::GetVertexShader()
     {
         return m_vertexShader;
@@ -109,9 +99,6 @@ namespace library
       Returns:  ComPtr<ID3D11InputLayout>&
                   Vertex input layout
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: VertexShader::GetVertexLayout definition (remove the comment)
-    --------------------------------------------------------------------*/
     ComPtr<ID3D11InputLayout>& VertexShader::GetVertexLayout()
     {
         return m_vertexLayout;

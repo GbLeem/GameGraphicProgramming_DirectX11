@@ -18,9 +18,6 @@ namespace library
 
       Modifies: [m_pszFileName, m_pszEntryPoint, m_pszShaderModel].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Shader::Shader definition (remove the comment)
-    --------------------------------------------------------------------*/
     Shader::Shader(_In_ PCWSTR pszFileName, _In_ PCSTR pszEntryPoint, _In_ PCSTR pszShaderModel)
         :m_pszFileName(pszFileName)
         ,m_pszEntryPoint(pszEntryPoint)
@@ -36,9 +33,6 @@ namespace library
       Returns:  PCWSTR
                   Shader file name
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Shader::GetFileName definition (remove the comment)
-    --------------------------------------------------------------------*/
     PCWSTR Shader::GetFileName() const
     {
         return m_pszFileName;
@@ -56,9 +50,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Shader::compile definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Shader::compile(_Outptr_ ID3DBlob** ppOutBlob)
     {
         HRESULT hr = S_OK;
