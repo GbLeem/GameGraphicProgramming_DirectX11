@@ -18,35 +18,35 @@
 #include "Shader/VertexShader.h"
 
 namespace library
-{
+{  
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-      Class:    Renderable
+        Class:    Renderable
 
-      Summary:  Base class for all renderable classes
+        Summary:  Base class for all renderable classes
 
-      Methods:  Initialize
-                  Pure virtual function that initializes the object
+        Methods:  Initialize
+                    Pure virtual function that initializes the object
                 Update
-                  Pure virtual function that updates the object each 
-                  frame
+                    Pure virtual function that updates the object each
+                    frame
                 GetVertexBuffer
-                  Returns the vertex buffer
+                    Returns the vertex buffer
                 GetIndexBuffer
-                  Returns the index buffer
+                    Returns the index buffer
                 GetConstantBuffer
-                  Returns the constant buffer
+                    Returns the constant buffer
                 GetWorldMatrix
-                  Returns the world matrix
+                    Returns the world matrix
                 GetNumVertices
-                  Pure virtual function that returns the number of 
-                  vertices
+                    Pure virtual function that returns the number of
+                    vertices
                 GetNumIndices
-                  Pure virtual function that returns the number of 
-                  indices
+                    Pure virtual function that returns the number of
+                    indices
                 Renderable
-                  Constructor.
+                    Constructor.
                 ~Renderable
-                  Destructor.
+                    Destructor.
     C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
     class Renderable
     {
@@ -72,17 +72,10 @@ namespace library
         ComPtr<ID3D11Buffer>& GetConstantBuffer();
         const XMMATRIX& GetWorldMatrix() const;
 
-        void RotateX(_In_ FLOAT angle);
-        void RotateY(_In_ FLOAT angle);
-        void RotateZ(_In_ FLOAT angle);
-        void RotateRollPitchYaw(_In_ FLOAT roll, _In_ FLOAT pitch, _In_ FLOAT yaw);
-        void Scale(_In_ FLOAT scaleX, _In_ FLOAT scaleY, _In_ FLOAT scaleZ);
-        void Translate(_In_ const XMVECTOR& offset);
-
         virtual UINT GetNumVertices() const = 0;
         virtual UINT GetNumIndices() const = 0;
     protected:
-        virtual const SimpleVertex* getVertices() const = 0;
+        const virtual SimpleVertex* getVertices() const = 0;
         virtual const WORD* getIndices() const = 0;
         HRESULT initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext);
 

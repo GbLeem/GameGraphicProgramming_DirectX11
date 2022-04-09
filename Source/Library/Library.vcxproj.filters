@@ -25,6 +25,9 @@
     <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{c7d8d162-20a2-4485-86e7-600fc6405fe7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{bad25ee7-ffb7-41bb-ab12-5d39ea2dcbc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -60,6 +63,9 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera\Camera.h">
+      <Filter>Source Files\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="directx.ico">
@@ -92,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="Shader\VertexShader.cpp">
       <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\Camera.cpp">
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

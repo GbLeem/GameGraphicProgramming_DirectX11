@@ -1,26 +1,24 @@
 #pragma once
 
-#include "Common.h"
-
 namespace library
 {
-    /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
+    /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
       Struct:    SimpleVertex
 
       Summary:  Simple vertex structure containing a single field of the
                 type XMFLOAT3
-    C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
+    S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
     struct SimpleVertex
     {
         XMFLOAT3 Position;
     };
 
-    /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
+    /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
       Struct:   ConstantBuffer
 
-      Summary:  Simple constant buffer structure containing world, view, 
+      Summary:  Simple constant buffer structure containing world, view,
                 projection matrices
-    C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
+    S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
     struct ConstantBuffer
     {
         XMMATRIX World;
@@ -28,4 +26,3 @@ namespace library
         XMMATRIX Projection;
     };
 }
- 
