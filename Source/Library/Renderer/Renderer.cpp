@@ -250,7 +250,6 @@ namespace library
         //Bind Depth-Stencil Data to the OM stage
         m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
-
         //<Create View and Projection Matrices>
 
         //initialize the view matrix
@@ -427,7 +426,6 @@ namespace library
         //Present the information rendered to the back buffer to the front buffer
         m_swapChain->Present(0, 0);
 
-        m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::SetVertexShaderOfRenderable
@@ -446,11 +444,13 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     HRESULT Renderer::SetVertexShaderOfRenderable(_In_ PCWSTR pszRenderableName, _In_ PCWSTR pszVertexShaderName)
     {
-        if (m_renderables.contains(pszRenderableName) && m_vertexShaders.contains(pszVertexShaderName))
+        if (m_renderables.contains(pszRenderableName))
         {
-            auto vertexShader = m_vertexShaders[pszVertexShaderName];
-            m_renderables[pszRenderableName]->SetVertexShader(vertexShader);
-            return S_OK;
+            if (m_vertexShaders.contains(pszVertexShaderName))
+            {
+                m_renderables[pszRenderableName]->SetVertexShader(m_vertexShaders[pszVertexShaderName]);
+                return S_OK;
+            }
         }
         return E_FAIL;
     }
@@ -472,11 +472,13 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     HRESULT Renderer::SetPixelShaderOfRenderable(_In_ PCWSTR pszRenderableName, _In_ PCWSTR pszPixelShaderName)
     {
-        if (m_renderables.contains(pszRenderableName) && m_pixelShaders.contains(pszPixelShaderName) )
+        if (m_renderables.contains(pszRenderableName))
         {
-            auto pixelShader = m_pixelShaders[pszPixelShaderName];
-            m_renderables[pszRenderableName]->SetPixelShader(pixelShader);
-            return S_OK;
+            if (m_pixelShaders.contains(pszPixelShaderName))
+            {
+                m_renderables[pszRenderableName]->SetPixelShader(m_pixelShaders[pszPixelShaderName]);
+                return S_OK;
+            }
         }
         return E_FAIL;
     }
