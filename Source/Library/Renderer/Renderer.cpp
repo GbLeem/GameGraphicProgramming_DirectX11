@@ -264,21 +264,15 @@ namespace library
         //initialize the shaders then the renderables
         for (auto Renderableiter : m_renderables)
         {
-            hr = Renderableiter.second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
-            if (FAILED(hr))
-                return hr;
+            Renderableiter.second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
         }
         for (auto VertexShaderiter : m_vertexShaders)
         {
-            hr = VertexShaderiter.second->Initialize(m_d3dDevice.Get());
-            if (FAILED(hr))
-                return hr;
+            VertexShaderiter.second->Initialize(m_d3dDevice.Get());
         }
         for (auto PixelShaderiter : m_pixelShaders)
         {
-            hr = PixelShaderiter.second->Initialize(m_d3dDevice.Get());
-            if (FAILED(hr))
-                return hr;
+            PixelShaderiter.second->Initialize(m_d3dDevice.Get());
         }
 
         //set primitive topology

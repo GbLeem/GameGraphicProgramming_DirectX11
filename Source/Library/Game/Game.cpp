@@ -58,7 +58,8 @@ namespace library
     INT Game::Run()
     {
         LARGE_INTEGER StartTime, StopTime, Frequency;
-        FLOAT  ElapsedTime;
+        FLOAT ElapsedTime;
+
         MSG msg = { 0 };
 
         QueryPerformanceFrequency(&Frequency);
@@ -66,7 +67,6 @@ namespace library
 
         while (WM_QUIT != msg.message)
         {
-
             if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
             {
                 TranslateMessage(&msg);
@@ -75,8 +75,9 @@ namespace library
             else
             {
                 QueryPerformanceCounter(&StopTime);
-                ElapsedTime = (StopTime.QuadPart - StartTime.QuadPart) /(FLOAT)Frequency.QuadPart;
-              
+                ElapsedTime = (StopTime.QuadPart - StartTime.QuadPart);
+                ElapsedTime /= (FLOAT)Frequency.QuadPart;
+
                 m_renderer->Update(ElapsedTime);
                 m_renderer->Render();
             }
