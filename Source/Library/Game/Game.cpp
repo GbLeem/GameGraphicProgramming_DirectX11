@@ -12,9 +12,6 @@ namespace library
 
       Modifies: [m_pszGameName, m_mainWindow, m_renderer].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Game::Game definition (remove the comment)
-    --------------------------------------------------------------------*/
     Game::Game(_In_ PCWSTR pszGameName)
         :m_pszGameName(pszGameName)
         ,m_mainWindow(std::make_unique<MainWindow>())
@@ -37,9 +34,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Game::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Game::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
     {
         //initialize window first, then device
@@ -61,22 +55,18 @@ namespace library
       Returns:  INT
                   Status code to return to the operating system
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Game::Run definition (remove the comment)
-    --------------------------------------------------------------------*/
     INT Game::Run()
     {
-        LARGE_INTEGER StartTime, StopTime, Frequency;
-        FLOAT ElapsedTime = 0.0f;
+        LARGE_INTEGER StartTime, StopTime, Frequency, ElapsedMicroseconds;
+        FLOAT ElapsedTime;
 
         MSG msg = { 0 };
 
         QueryPerformanceFrequency(&Frequency);
         QueryPerformanceCounter(&StartTime);
-            
+               
         while (WM_QUIT != msg.message)
         {
-
             if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
             {
                 TranslateMessage(&msg);
@@ -85,19 +75,19 @@ namespace library
             else
             {
                 QueryPerformanceCounter(&StopTime);
-
-                ElapsedTime = (FLOAT)(StopTime.QuadPart - StartTime.QuadPart);
-                ElapsedTime /= (FLOAT)Frequency.QuadPart;
+                ElapsedMicroseconds.QuadPart = StopTime.QuadPart - StartTime.QuadPart;
+                ElapsedMicroseconds.QuadPart *= 1000000;
+                ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
+                ElapsedTime = (FLOAT)ElapsedMicroseconds.QuadPart/100.f ;
 
                 m_renderer->HandleInput(m_mainWindow->GetDirections(), m_mainWindow->GetMouseRelativeMovement(), ElapsedTime);
                 m_mainWindow->ResetMouseMovement();
-              
-                //handling input
-                //m_renderer->Update(ElapsedTime);
+                
+                //reset startTime
+                QueryPerformanceCounter(&StartTime);
 
                 //render
                 m_renderer->Render();
-
             }
         }
         return 0;
@@ -110,9 +100,6 @@ namespace library
       Returns:  PCWSTR
                   Name of the game
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Game::GetGameName definition (remove the comment)
-    --------------------------------------------------------------------*/
     PCWSTR Game::GetGameName() const
     {
         return m_pszGameName;
@@ -125,9 +112,6 @@ namespace library
       Returns:  std::unique_ptr<MainWindow>&
                   The main window
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Game::GetWindow definition (remove the comment)
-    --------------------------------------------------------------------*/
     std::unique_ptr<MainWindow>& Game::GetWindow()
     {
         return m_mainWindow;
@@ -141,9 +125,6 @@ namespace library
       Returns:  std::unique_ptr<Renderer>&
                   The renderer
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Game::GetRenderer definition (remove the comment)
-    --------------------------------------------------------------------*/
     std::unique_ptr<Renderer>& Game::GetRenderer()
     {
         return m_renderer;

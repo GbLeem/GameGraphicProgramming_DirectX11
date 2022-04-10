@@ -18,9 +18,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: MainWindow::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT MainWindow::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow, _In_ PCWSTR pszWindowName)
     {
         RECT rc = { 0, 0, 800, 600 };
@@ -28,9 +25,8 @@ namespace library
 
         HRESULT hr = initialize(hInstance, nCmdShow, pszWindowName, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr);
         if (FAILED(hr))
-        {
             return hr;
-        }
+        
         return S_OK;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -41,9 +37,6 @@ namespace library
       Returns:  PCWSTR
                   Name of the window class
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: MainWindow::GetWindowClassName definition (remove the comment)
-    --------------------------------------------------------------------*/
     PCWSTR MainWindow::GetWindowClassName() const
     {
         return L"WindowClassName";
@@ -63,9 +56,6 @@ namespace library
       Returns:  LRESULT
                   Integer value that your program returns to Windows
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: MainWindow::HandleMessage definition (remove the comment)
-    --------------------------------------------------------------------*/
     LRESULT MainWindow::HandleMessage(_In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
     {
         PAINTSTRUCT ps;
@@ -193,9 +183,6 @@ namespace library
       Returns:  const DirectionsInput&
                   Keyboard direction input
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: MainWindow::GetDirections definition (remove the comment)
-    --------------------------------------------------------------------*/
     const DirectionsInput& MainWindow::GetDirections() const
     {
         return m_directions;
@@ -209,9 +196,6 @@ namespace library
       Returns:  const MouseRelativeMovement&
                   Mouse relative movement
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: MainWindow::GetMouseRelativeMovement definition (remove the comment)
-    --------------------------------------------------------------------*/
     const MouseRelativeMovement& MainWindow::GetMouseRelativeMovement() const
     {
         return m_mouseRelativeMovement;
@@ -221,9 +205,6 @@ namespace library
 
       Summary:  Reset the mouse relative movement to zero
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: MainWindow::ResetMouseMovement definition (remove the comment)
-    --------------------------------------------------------------------*/
     void MainWindow::ResetMouseMovement()
     {
         m_mouseRelativeMovement.X = 0;
