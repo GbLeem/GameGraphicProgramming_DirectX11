@@ -75,31 +75,31 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    if (FAILED(game->GetRenderer()->AddRenderable(L"SmallCube", std::make_shared<SmallCube>())))
-    {
-        return 0;
-    }
-    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"SmallCube", L"MainShader")))
-    {
-        return 0;
-    }
-    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"SmallCube", L"MainShader")))
-    {
-        return 0;
-    }
+    //if (FAILED(game->GetRenderer()->AddRenderable(L"SmallCube", std::make_shared<SmallCube>())))
+    //{
+    //    return 0;
+    //}
+    //if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"SmallCube", L"MainShader")))
+    //{
+    //    return 0;
+    //}
+    //if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"SmallCube", L"MainShader")))
+    //{
+    //    return 0;
+    //}
 
-    if (FAILED(game->GetRenderer()->AddRenderable(L"innerCube", std::make_shared<innerCube>())))
-    {
-        return 0;
-    }
-    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"innerCube", L"MainShader")))
-    {
-        return 0;
-    }
-    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"innerCube", L"MainShader")))
-    {
-        return 0;
-    }
+    //if (FAILED(game->GetRenderer()->AddRenderable(L"innerCube", std::make_shared<innerCube>())))
+    //{
+    //    return 0;
+    //}
+    //if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"innerCube", L"MainShader")))
+    //{
+    //    return 0;
+    //}
+    //if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"innerCube", L"MainShader")))
+    //{
+    //    return 0;
+    //}
 
     if (FAILED(game->Initialize(hInstance, nCmdShow)))
     {

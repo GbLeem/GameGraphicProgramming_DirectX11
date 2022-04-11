@@ -24,7 +24,7 @@ namespace library
         ,m_renderTargetView(nullptr)
         ,m_depthStencil(nullptr)
         ,m_depthStencilView(nullptr)
-        ,m_camera(XMVectorSet(0.0f, 1.0f, -4.0f, 0.0f))
+        ,m_camera(XMVectorSet(1.0f, 1.0f, -4.0f, 0.0f))
         ,m_projection()
     {
         
