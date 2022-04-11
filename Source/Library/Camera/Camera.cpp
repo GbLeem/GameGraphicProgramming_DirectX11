@@ -98,7 +98,8 @@ namespace library
                  m_moveUpDown].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     void Camera::HandleInput(_In_ const DirectionsInput& directions, _In_ const MouseRelativeMovement& mouseRelativeMovement, _In_ FLOAT deltaTime)
-    {        
+    {   
+        //mouse input
         MouseRelativeMovement mouseLastState;
         mouseLastState.X = 0;
         mouseLastState.Y = 0;
@@ -107,15 +108,18 @@ namespace library
             m_pitch = XM_PIDIV2;
         else if (m_pitch < -XM_PIDIV2)
             m_pitch = -XM_PIDIV2;
-
-        if (mouseRelativeMovement.X != mouseLastState.X || mouseRelativeMovement.Y != mouseLastState.Y)
+        else
         {
-            m_yaw += mouseRelativeMovement.X * m_rotationSpeed * deltaTime;
-            m_pitch += mouseRelativeMovement.Y * m_rotationSpeed * deltaTime;
+            if (mouseRelativeMovement.X != mouseLastState.X || mouseRelativeMovement.Y != mouseLastState.Y)
+            {
+                m_yaw += mouseRelativeMovement.X * m_rotationSpeed * deltaTime;
+                m_pitch += mouseRelativeMovement.Y * m_rotationSpeed * deltaTime;
 
-            mouseLastState = mouseRelativeMovement;
+                mouseLastState = mouseRelativeMovement;
+            }
         }
 
+        //keyboard input
         if (directions.bFront == TRUE)
         {
             m_moveBackForward += m_travelSpeed * deltaTime;
@@ -140,6 +144,7 @@ namespace library
         {
             m_moveUpDown -= m_travelSpeed * deltaTime;
         }
+
         Update(deltaTime);
     }
 

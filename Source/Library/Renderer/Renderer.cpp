@@ -24,7 +24,7 @@ namespace library
         ,m_renderTargetView(nullptr)
         ,m_depthStencil(nullptr)
         ,m_depthStencilView(nullptr)
-        ,m_camera(XMVectorSet(1.0f, 1.0f, -4.0f, 0.0f))
+        ,m_camera(XMVectorSet(0.0f,0.0f,0.0f,0.0f))
         ,m_projection()
     {
         
@@ -51,8 +51,6 @@ namespace library
 
         RECT rc;
         GetClientRect(hWnd, &rc);
-        UINT width = rc.right - rc.left;
-        UINT height = rc.bottom - rc.top;
 
         //fix the mouse cursor inside the client area
         POINT p1, p2;
@@ -70,6 +68,9 @@ namespace library
         rc.bottom = p2.y;
 
         ClipCursor(&rc);
+
+        UINT width = rc.right - rc.left;
+        UINT height = rc.bottom - rc.top;
 
         UINT createDeviceFlags = 0;
 #ifdef _DEBUG
@@ -220,7 +221,6 @@ namespace library
         vp.TopLeftY = 0;
 
         m_immediateContext->RSSetViewports(1, &vp);
-
 
         //<Depth Stencil>  
 

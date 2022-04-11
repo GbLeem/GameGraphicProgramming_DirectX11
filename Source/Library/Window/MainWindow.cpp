@@ -102,7 +102,7 @@ namespace library
         case WM_KEYDOWN:
             switch (wParam)
             {
-            case VK_ESCAPE: //quit window
+            case VK_ESCAPE: //quit window with esc key
                 if (MessageBox(m_hWnd, L"Really Quit?", L"Game Graphics Programming", MB_OKCANCEL) == IDOK)
                 {
                     DestroyWindow(m_hWnd);
