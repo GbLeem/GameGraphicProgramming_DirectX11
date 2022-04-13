@@ -41,7 +41,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class BaseCube : public library::Renderable
 {
 public:
-    BaseCube() = default;
+    BaseCube(const std::filesystem::path& textureFilePath);
     BaseCube(const BaseCube& other) = delete;
     BaseCube(BaseCube&& other) = delete;
     BaseCube& operator=(const BaseCube& other) = delete;

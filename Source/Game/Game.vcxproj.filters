@@ -11,6 +11,9 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{f02be5f8-566a-477b-b237-f50ba8f066f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{14a7d3d1-cbd5-4c67-9374-7d2c095cc4fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -19,29 +22,9 @@
     <ClCompile Include="Cube\BaseCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="Cube\YourCube.cpp">
+    <ClCompile Include="Cube\Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="Cube\innerCube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube\SmallCube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Cube\BaseCube.h">
-      <Filter>Source Files\Cube</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube\YourCube.h">
-      <Filter>Source Files\Cube</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube\innerCube.h">
-      <Filter>Source Files\Cube</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube\SmallCube.h">
-      <Filter>Source Files\Cube</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl">
@@ -55,5 +38,18 @@
     <None Include="Shaders\Shaders.fxh">
       <Filter>Source Files\Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cube\BaseCube.h">
+      <Filter>Source Files\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube\Cube.h">
+      <Filter>Source Files\Cube</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="seafloor.dds">
+      <Filter>Resource</Filter>
+    </Image>
   </ItemGroup>
 </Project>

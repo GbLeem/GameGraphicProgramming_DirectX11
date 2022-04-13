@@ -11,18 +11,36 @@ namespace library
     struct SimpleVertex
     {
         XMFLOAT3 Position;
+        XMFLOAT2 Material;
     };
 
     /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
-      Struct:   ConstantBuffer
+      Struct:   CBChangeOnCameraMovement
 
-      Summary:  Simple constant buffer structure containing world, view,
-                projection matrices
+      Summary:  Constant buffer containing view matrix
     S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
-    struct ConstantBuffer
+    struct CBChangeOnCameraMovement
+    {
+        XMMATRIX View;
+    };
+
+    /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
+      Struct:   CBChangeOnResize
+
+      Summary:  Constant buffer containing projection matrix
+    S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
+    struct CBChangeOnResize
+    {
+        XMMATRIX Projection;
+    };
+
+    /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
+      Struct:   CBChangesEveryFrame
+
+      Summary:  Constant buffer containing world matrix
+    S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
+    struct CBChangesEveryFrame
     {
         XMMATRIX World;
-        XMMATRIX View;
-        XMMATRIX Projection;
     };
 }

@@ -26,32 +26,36 @@ namespace library
 
         Methods:  Initialize
                     Pure virtual function that initializes the object
-                Update
+                  Update
                     Pure virtual function that updates the object each
                     frame
-                GetVertexBuffer
+                  GetVertexBuffer
                     Returns the vertex buffer
-                GetIndexBuffer
+                  GetIndexBuffer
                     Returns the index buffer
-                GetConstantBuffer
+                  GetConstantBuffer
                     Returns the constant buffer
-                GetWorldMatrix
+                  GetWorldMatrix
                     Returns the world matrix
-                GetNumVertices
+                  GetTextureResourceView
+                    Returns the texture resource view
+                  GetSamplerState
+                    Returns the sampler state
+                  GetNumVertices
                     Pure virtual function that returns the number of
                     vertices
-                GetNumIndices
+                  GetNumIndices
                     Pure virtual function that returns the number of
                     indices
-                Renderable
+                  Renderable
                     Constructor.
-                ~Renderable
+                  ~Renderable
                     Destructor.
     C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
     class Renderable
     {
     public:
-        Renderable() = default;
+        Renderable(_In_ const std::filesystem::path& textureFilePath);
         Renderable(const Renderable& other) = delete;
         Renderable(Renderable&& other) = delete;
         Renderable& operator=(const Renderable& other) = delete;
@@ -71,6 +75,8 @@ namespace library
         ComPtr<ID3D11Buffer>& GetIndexBuffer();
         ComPtr<ID3D11Buffer>& GetConstantBuffer();
         const XMMATRIX& GetWorldMatrix() const;
+        ComPtr<ID3D11ShaderResourceView>& GetTextureResourceView();
+        ComPtr<ID3D11SamplerState>& GetSamplerState();
 
         virtual UINT GetNumVertices() const = 0;
         virtual UINT GetNumIndices() const = 0;
@@ -82,9 +88,11 @@ namespace library
         ComPtr<ID3D11Buffer> m_vertexBuffer;
         ComPtr<ID3D11Buffer> m_indexBuffer;
         ComPtr<ID3D11Buffer> m_constantBuffer;
+        ComPtr<ID3D11ShaderResourceView> m_textureRV;
+        ComPtr<ID3D11SamplerState> m_samplerLinear;
         std::shared_ptr<VertexShader> m_vertexShader;
         std::shared_ptr<PixelShader> m_pixelShader;
-        BYTE m_padding[8];
+        std::filesystem::path m_textureFilePath;
         XMMATRIX m_world;
     };
 }

@@ -9,25 +9,31 @@ namespace library
 
       Modifies: [m_driverType, m_featureLevel, m_d3dDevice, m_d3dDevice1,
                  m_immediateContext, m_immediateContext1, m_swapChain,
-                 m_swapChain1, m_renderTargetView, m_vertexShader,
-                 m_pixelShader, m_vertexLayout, m_vertexBuffer].
+                 m_swapChain1, m_renderTargetView, m_depthStencil,
+                 m_depthStencilView, m_cbChangeOnResize, m_camera,
+                 m_projection, m_renderables, m_vertexShaders,
+                 m_pixelShaders].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::Renderer definition (remove the comment)
+    --------------------------------------------------------------------*/
     Renderer::Renderer()
-        :m_driverType(D3D_DRIVER_TYPE_HARDWARE)
-        ,m_featureLevel(D3D_FEATURE_LEVEL_11_1)
-        ,m_d3dDevice(nullptr)
-        ,m_d3dDevice1(nullptr)
-        ,m_immediateContext(nullptr)
-        ,m_immediateContext1(nullptr)
-        ,m_swapChain(nullptr)
-        ,m_swapChain1(nullptr)
-        ,m_renderTargetView(nullptr)
-        ,m_depthStencil(nullptr)
-        ,m_depthStencilView(nullptr)
-        ,m_camera(XMVectorSet(0.0f,0.0f,0.0f,0.0f))
-        ,m_projection()
+        : m_driverType(D3D_DRIVER_TYPE_HARDWARE)
+        , m_featureLevel(D3D_FEATURE_LEVEL_11_1)
+        , m_d3dDevice(nullptr)
+        , m_d3dDevice1(nullptr)
+        , m_immediateContext(nullptr)
+        , m_immediateContext1(nullptr)
+        , m_swapChain(nullptr)
+        , m_swapChain1(nullptr)
+        , m_renderTargetView(nullptr)
+        , m_depthStencil(nullptr)
+        , m_depthStencilView(nullptr)
+        , m_cbChangeOnResize()
+        , m_padding()
+        , m_camera(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f))
+        , m_projection()
     {
-        
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::Initialize
@@ -39,12 +45,16 @@ namespace library
 
       Modifies: [m_d3dDevice, m_featureLevel, m_immediateContext,
                  m_d3dDevice1, m_immediateContext1, m_swapChain1,
-                 m_swapChain, m_renderTargetView, m_vertexShader,
-                 m_vertexLayout, m_pixelShader, m_vertexBuffer].
+                 m_swapChain, m_renderTargetView, m_cbChangeOnResize,
+                 m_projection, m_camera, m_vertexShaders,
+                 m_pixelShaders, m_renderables].
 
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::Initialize definition (remove the comment)
+    --------------------------------------------------------------------*/
     HRESULT Renderer::Initialize(_In_ HWND hWnd)
     {
         HRESULT hr = S_OK;
@@ -266,7 +276,7 @@ namespace library
 
         //Bind Depth-Stencil Data to the OM stage
         m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
-              
+
         //initialize the projection matrix
         m_projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f);
 
@@ -287,9 +297,22 @@ namespace library
         //set primitive topology
         m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+        //create constant buffer
+        D3D11_BUFFER_DESC bd =
+        {
+            .ByteWidth = sizeof(CBChangeOnResize),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_CONSTANT_BUFFER,
+            .CPUAccessFlags = 0,
+            .MiscFlags = 0,
+            .StructureByteStride = 0
+        };
+        hr = m_d3dDevice->CreateBuffer(&bd, nullptr, m_cbChangeOnResize.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
         return S_OK;
     }
-
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::AddRenderable
 
@@ -305,11 +328,14 @@ namespace library
       Returns:  HRESULT
                   Status code.
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::AddRenderable definition (remove the comment)
+    --------------------------------------------------------------------*/
     HRESULT Renderer::AddRenderable(_In_ PCWSTR pszRenderableName, _In_ const std::shared_ptr<Renderable>& renderable)
     {
-        if (m_renderables.contains(pszRenderableName)) //found
+        if(m_renderables.contains(pszRenderableName)) 
             return E_FAIL;
-        else                                           //not found
+        else                                         
         {
             m_renderables[pszRenderableName] = renderable;
             return S_OK;
@@ -330,16 +356,20 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::AddVertexShader definition (remove the comment)
+    --------------------------------------------------------------------*/
     HRESULT Renderer::AddVertexShader(_In_ PCWSTR pszVertexShaderName, _In_ const std::shared_ptr<VertexShader>& vertexShader)
     {
-        if (m_vertexShaders.contains(pszVertexShaderName)) //found
+        if (m_vertexShaders.contains(pszVertexShaderName))
             return E_FAIL;
-        else                                             //not found
+        else
         {
             m_vertexShaders[pszVertexShaderName] = vertexShader;
             return S_OK;
         }
     }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::AddPixelShader
 
@@ -355,11 +385,14 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::AddPixelShader definition (remove the comment)
+    --------------------------------------------------------------------*/
     HRESULT Renderer::AddPixelShader(_In_ PCWSTR pszPixelShaderName, _In_ const std::shared_ptr<PixelShader>& pixelShader)
     {
-        if (m_pixelShaders.contains(pszPixelShaderName)) //found
+        if (m_pixelShaders.contains(pszPixelShaderName))
             return E_FAIL;
-        else                                             //not found
+        else
         {
             m_pixelShaders[pszPixelShaderName] = pixelShader;
             return S_OK;
@@ -377,10 +410,14 @@ namespace library
 
       Modifies: [m_camera].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::HandleInput definition (remove the comment)
+    --------------------------------------------------------------------*/
     void Renderer::HandleInput(_In_ const DirectionsInput& directions, _In_ const MouseRelativeMovement& mouseRelativeMovement, _In_ FLOAT deltaTime)
     {
         m_camera.HandleInput(directions, mouseRelativeMovement, deltaTime);
     }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::Update
 
@@ -389,6 +426,9 @@ namespace library
       Args:     FLOAT deltaTime
                   Time difference of a frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::Update definition (remove the comment)
+    --------------------------------------------------------------------*/
     void Renderer::Update(_In_ FLOAT deltaTime)
     {
         for (auto Renderableiter : m_renderables)
@@ -401,6 +441,9 @@ namespace library
 
       Summary:  Render the frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::Render definition (remove the comment)
+    --------------------------------------------------------------------*/
     void Renderer::Render()
     {
         //clear the back buffer
@@ -409,6 +452,8 @@ namespace library
         //clear the depth buffer to 1.0
         m_immediateContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
+
+        //Constant buffers must be updated accordingly
 
         for (auto Renderableiter : m_renderables)
         {
@@ -423,14 +468,42 @@ namespace library
             //set input layout
             m_immediateContext->IASetInputLayout(Renderableiter.second->GetVertexLayout().Get());
 
-            //update constatnt buffer
-            ConstantBuffer cb =
+            //< bind texture as shader resource >
+            //Texture resource view of the renderable must be set into the pixel shader -ok
+            m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetTextureResourceView().GetAddressOf());
+
+            //Sampler state of the renderable must be set into the pixel shader - ok
+            m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetSamplerState().GetAddressOf());
+
+            //Create camera constant buffer
+            // For all renderables
+            //1) Create renderable constant bufferand update
+            //2) Set shadersand constant buffers, shader resources, and samplers
+            //3) Draw
+            
+            //update variables that change once per frame
+            //1. CameraMovement
+            CBChangeOnCameraMovement b0 =
             {
-                .World = XMMatrixTranspose(Renderableiter.second->GetWorldMatrix()),
-                .View = XMMatrixTranspose(m_camera.GetView()),
+                .View = XMMatrixTranspose(m_camera.GetView())
+            };
+
+            //2. ChangeOnResize
+            CBChangeOnResize b1 =
+            {
                 .Projection = XMMatrixTranspose(m_projection)
             };
-            m_immediateContext->UpdateSubresource(Renderableiter.second->GetConstantBuffer().Get(), 0, nullptr, &cb, 0, 0);
+
+
+            //3. Every frame
+            CBChangesEveryFrame b2 =
+            {
+                .World = XMMatrixTranspose(Renderableiter.second->GetWorldMatrix())
+            };
+
+            m_immediateContext->UpdateSubresource(Renderableiter.second->GetConstantBuffer().Get(), 0, nullptr, &b0, 0, 0);
+            m_immediateContext->UpdateSubresource(m_cbChangeOnResize.Get(), 0, nullptr, &b1, 0, 0);
+            m_immediateContext->UpdateSubresource(Renderableiter.second->GetConstantBuffer().Get(), 0, nullptr, &b2, 0, 0);
 
             //set buffer
             m_immediateContext->VSSetConstantBuffers(0, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
@@ -442,7 +515,6 @@ namespace library
         }
         //Present the information rendered to the back buffer to the front buffer
         m_swapChain->Present(0, 0);
-
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::SetVertexShaderOfRenderable
@@ -459,6 +531,9 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::SetVertexShaderOfRenderable definition (remove the comment)
+    --------------------------------------------------------------------*/
     HRESULT Renderer::SetVertexShaderOfRenderable(_In_ PCWSTR pszRenderableName, _In_ PCWSTR pszVertexShaderName)
     {
         if (m_renderables.contains(pszRenderableName))
@@ -487,6 +562,9 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::SetPixelShaderOfRenderable definition (remove the comment)
+    --------------------------------------------------------------------*/
     HRESULT Renderer::SetPixelShaderOfRenderable(_In_ PCWSTR pszRenderableName, _In_ PCWSTR pszPixelShaderName)
     {
         if (m_renderables.contains(pszRenderableName))
@@ -499,6 +577,7 @@ namespace library
         }
         return E_FAIL;
     }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::GetDriverType
 
@@ -507,8 +586,12 @@ namespace library
       Returns:  D3D_DRIVER_TYPE
                   The Direct3D driver type used
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::GetDriverType definition (remove the comment)
+    --------------------------------------------------------------------*/
     D3D_DRIVER_TYPE Renderer::GetDriverType() const
     {
         return m_driverType;
     }
+
 }
