@@ -17,6 +17,7 @@
 #include <source_location>
 
 #include "Cube/Cube.h"
+#include "Cube/FireCube.h"
 #include "Game/Game.h"
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -77,6 +78,23 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
+
+    std::shared_ptr<FireCube> cube2 = std::make_shared<FireCube>("fire.dds");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"FireCube", cube2)))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"FireCube", L"MainShader")))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"FireCube", L"MainShader")))
+    {
+        return 0;
+    }
+
 
     if (FAILED(game->Initialize(hInstance, nCmdShow)))
     {

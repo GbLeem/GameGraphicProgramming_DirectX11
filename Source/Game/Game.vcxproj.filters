@@ -25,6 +25,9 @@
     <ClCompile Include="Cube\Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
+    <ClCompile Include="FireCube.cpp">
+      <Filter>Source Files\Cube</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl">
@@ -46,8 +49,14 @@
     <ClInclude Include="Cube\Cube.h">
       <Filter>Source Files\Cube</Filter>
     </ClInclude>
+    <ClInclude Include="FireCube.h">
+      <Filter>Source Files\Cube</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="texture\fire.dds">
+      <Filter>Resource</Filter>
+    </Image>
     <Image Include="seafloor.dds">
       <Filter>Resource</Filter>
     </Image>

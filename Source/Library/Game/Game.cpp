@@ -78,7 +78,7 @@ namespace library
                 ElapsedMicroseconds.QuadPart = StopTime.QuadPart - StartTime.QuadPart;
                 ElapsedMicroseconds.QuadPart *= 1000000;
                 ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
-                ElapsedTime = ElapsedMicroseconds.QuadPart / 100000.f;
+                ElapsedTime = ElapsedMicroseconds.QuadPart / 1000000.f;
 
                 m_renderer->HandleInput(m_mainWindow->GetDirections(), m_mainWindow->GetMouseRelativeMovement(), ElapsedTime);
                 m_mainWindow->ResetMouseMovement();
@@ -86,6 +86,7 @@ namespace library
                 //reset startTime
                 QueryPerformanceCounter(&StartTime);
                 
+                m_renderer->Update(ElapsedTime);
 
                 //render
                 m_renderer->Render();
