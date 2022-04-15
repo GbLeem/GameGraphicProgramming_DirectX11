@@ -13,7 +13,7 @@
   <ItemGroup>
     <ClCompile Include="Cube\BaseCube.cpp" />
     <ClCompile Include="Cube\Cube.cpp" />
-    <ClCompile Include="FireCube.cpp" />
+    <ClCompile Include="Cube\FireCube.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -26,7 +26,7 @@
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h" />
     <ClInclude Include="Cube\Cube.h" />
-    <ClInclude Include="FireCube.h" />
+    <ClInclude Include="Cube\FireCube.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="seafloor.dds" />

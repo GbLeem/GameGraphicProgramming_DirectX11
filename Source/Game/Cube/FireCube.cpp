@@ -1,4 +1,4 @@
-#include "FireCube.h"
+#include "Cube/FireCube.h"
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   FireCube::FireCube
@@ -14,7 +14,7 @@ FireCube::FireCube(const std::filesystem::path& textureFilePath)
 }
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
-  Method:   Cube::Update
+  Method:   FireCube::Update
 
   Summary:  Updates the cube every frame
 
@@ -28,5 +28,6 @@ void FireCube::Update(_In_ FLOAT deltaTime)
     static FLOAT s_totalTime = 0.0f;
     s_totalTime += deltaTime;
 
-    m_world = XMMatrixTranslation(5.0f, XMScalarSin(s_totalTime), 0.0f) * XMMatrixRotationY(s_totalTime);
+    m_world = XMMatrixRotationY(s_totalTime) * XMMatrixTranslation(3.0f, XMScalarCos(s_totalTime), 0.0f);
+
 }
