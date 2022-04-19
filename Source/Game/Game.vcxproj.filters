@@ -14,6 +14,9 @@
     <Filter Include="Resource">
       <UniqueIdentifier>{14a7d3d1-cbd5-4c67-9374-7d2c095cc4fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Light">
+      <UniqueIdentifier>{8e0e8f08-dd9d-45b0-b419-227a80dcf2f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -25,7 +28,10 @@
     <ClCompile Include="Cube\Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="Cube\FireCube.cpp">
+    <ClCompile Include="Light\RotatingPointLight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube\RotatingCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,6 +47,9 @@
     <None Include="Shaders\Shaders.fxh">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\PhongShaders.fxh">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h">
@@ -49,7 +58,10 @@
     <ClInclude Include="Cube\Cube.h">
       <Filter>Source Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Cube\FireCube.h">
+    <ClInclude Include="Light\RotatingPointLight.h">
+      <Filter>Source Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube\RotatingCube.h">
       <Filter>Source Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>

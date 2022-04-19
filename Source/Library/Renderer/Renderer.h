@@ -1,19 +1,20 @@
 /*+===================================================================
   File:      RENDERER.H
 
-  Summary:   Renderer header file contains declarations of Renderer 
-             class used for the lab samples of Game Graphics 
+  Summary:   Renderer header file contains declarations of Renderer
+             class used for the lab samples of Game Graphics
              Programming course.
 
   Classes: Renderer
 
-  � 2022 Kyung Hee University
+  © 2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
 
 #include "Common.h"
 
 #include "Camera/Camera.h"
+#include "Light/PointLight.h"
 #include "Renderer/DataTypes.h"
 #include "Renderer/Renderable.h"
 #include "Shader/PixelShader.h"
@@ -31,21 +32,23 @@ namespace library
       Methods:  Initialize
                   Creates Direct3D device and swap chain
                 AddRenderable
-                  Add a renderable object and initialize the object
+                  Add a renderable object
+                AddPointLight
+                  Add a point light object
                 AddVertexShader
-                  Add the vertex shader into the renderer
+                  Add a vertex shader
                 AddPixelShader
-                  Add the pixel shader into the renderer
+                  Add a pixel shader
                 HandleInput
-                  Handles the keyboard / mouse input
+                  Handles input
                 Update
                   Update the renderables each frame
                 Render
                   Renders the frame
                 SetVertexShaderOfRenderable
-                  Sets the vertex shader for a renderable
+                  Sets vertex shader of a renderable
                 SetPixelShaderOfRenderable
-                  Sets the pixel shader for a renderable
+                  Sets pixel shader of a renderable
                 GetDriverType
                   Returns the Direct3D driver type
                 Renderer
@@ -65,6 +68,7 @@ namespace library
 
         HRESULT Initialize(_In_ HWND hWnd);
         HRESULT AddRenderable(_In_ PCWSTR pszRenderableName, _In_ const std::shared_ptr<Renderable>& renderable);
+        HRESULT AddPointLight(_In_ size_t index, _In_ const std::shared_ptr<PointLight>& pPointLight);
         HRESULT AddVertexShader(_In_ PCWSTR pszVertexShaderName, _In_ const std::shared_ptr<VertexShader>& vertexShader);
         HRESULT AddPixelShader(_In_ PCWSTR pszPixelShaderName, _In_ const std::shared_ptr<PixelShader>& pixelShader);
 
@@ -90,11 +94,12 @@ namespace library
         ComPtr<ID3D11Texture2D> m_depthStencil;
         ComPtr<ID3D11DepthStencilView> m_depthStencilView;
         ComPtr<ID3D11Buffer> m_cbChangeOnResize;
-        BYTE m_padding[8];
+        ComPtr<ID3D11Buffer> m_cbLights;
         Camera m_camera;
         XMMATRIX m_projection;
 
         std::unordered_map<std::wstring, std::shared_ptr<Renderable>> m_renderables;
+        std::shared_ptr<PointLight> m_aPointLights[NUM_LIGHTS];
         std::unordered_map<std::wstring, std::shared_ptr<VertexShader>> m_vertexShaders;
         std::unordered_map<std::wstring, std::shared_ptr<PixelShader>> m_pixelShaders;
     };
