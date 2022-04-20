@@ -12,18 +12,9 @@
 /*--------------------------------------------------------------------
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
-struct VS_INPUT
-{
-    float4 Position : POSITION;
-    float3 Normal : NORMAL;
-}
+Texture2D txDiffuse : register(t0);
+SamplerState samLinear : register(s0);
 
-struct PS_INPUT
-{
-    float4 Position : SV_POSITION;
-    float3 Normal : NORMAL;
-    float3 WorldPosition : WORLDPOS;
-}
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -38,7 +29,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangeOnCameraMovement : register(b0)
 {
     matrix View;
-    float CameraPosition;
+    float4 CameraPosition;
 }
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangeOnResize
@@ -92,9 +83,9 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 struct VS_PHONG_INPUT
 {
     float4 Position : POSITION;
-    float4 TexCoord : TEXCOORD0;
+    float2 TexCoord : TEXCOORD0;
     float3 Normal : NORMAL;
-}
+};
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Struct:   PS_PHONG_INPUT
@@ -108,7 +99,10 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 struct PS_PHONG_INPUT
 {
     float4 Position : SV_POSITION;
-}
+    float2 TexCoord : TEXCOORD0;
+    float3 Normal : NORMAL;
+    float3 WorldPosition : WORLDPOS;
+};
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Struct:   PS_LIGHT_CUBE_INPUT
@@ -119,10 +113,10 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 /*--------------------------------------------------------------------
   TODO: PS_LIGHT_CUBE_INPUT definition (remove the comment)
 --------------------------------------------------------------------*/
-PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
+struct PS_LIGHT_CUBE_INPUT
 {
-
-}
+    float4 Position : SV_POSITION;
+};
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
@@ -130,22 +124,33 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 /*--------------------------------------------------------------------
   TODO: Vertex Shader function VSPhong definition (remove the comment)
 --------------------------------------------------------------------*/
-PS_INPUT VS(VS_INPUT input)
+PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 {
-    PS_INPUT output = (PS_INPUT)0;
-    output.Position = mull(input.Position, World);
-    output.Position = mull(output.Position, View);
-    output.Position = mull(output.Position, Projection);
+    PS_PHONG_INPUT output = (PS_PHONG_INPUT)0;
+    output.Position = mul(input.Position, World);
+    output.Position = mul(output.Position, View);
+    output.Position = mul(output.Position, Projection);
 
     output.Normal = normalize( mul (float4 (input.Normal, 1) ,World).xyz );
 
     output.WorldPosition = mul( input.Position, World);
+
+    output.TexCoord = input.TexCoord;
 
     return output;
 }
 /*--------------------------------------------------------------------
   TODO: Vertex Shader function VSLightCube definition (remove the comment)
 --------------------------------------------------------------------*/
+PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
+{
+    PS_LIGHT_CUBE_INPUT output = (PS_LIGHT_CUBE_INPUT)0;
+    output.Position = mul(input.Position, World);
+    output.Position = mul(output.Position, View);
+    output.Position = mul(output.Position, Projection);
+
+    return output;
+}
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
@@ -153,16 +158,32 @@ PS_INPUT VS(VS_INPUT input)
 /*--------------------------------------------------------------------
   TODO: Pixel Shader function PSPhong definition (remove the comment)
 --------------------------------------------------------------------*/
-float4 PS(PS_INPUT input) : SV_TARGET
+float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 {
+   float3 ambient = float3(0.1f,0.1f,0.1f);
+
     float3 diffuse;
 
     for(uint i = 0; i < 2; ++i)
     {
-        float3 lightDirection = normalize(input.WorldPosition - LightPosition[i].xyz);
-        diffuse += dot(input.Normal, -lightDirection) * LightColors[i].xyz;
+        float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
+        diffuse += dot(input.Normal, -lightDirection) * LightColors[i].xyz ;
     }
-    return float4(saturate(diffuse), 1);
+
+    float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);
+    float3 specular;
+
+    for(uint i = 0; i < 2; ++i)
+    {
+        float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
+        float3 reflectDirection = reflect(lightDirection, input.Normal);
+        specular += pow(saturate(dot(-viewDirection, reflectDirection)), 20.0f) * LightColors[i] ;
+
+    }
+
+    //return float4(saturate(diffuse),1) + float4(ambient, 1.0f);
+
+    return float4(saturate(ambient + diffuse + specular), 1.0f );
 }
 
 /*--------------------------------------------------------------------

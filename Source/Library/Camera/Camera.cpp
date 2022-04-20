@@ -117,19 +117,17 @@ namespace library
         mouseLastState.X = 0;
         mouseLastState.Y = 0;
 
-        if (m_pitch > XM_PIDIV2)
-            m_pitch = XM_PIDIV2;
-        else if (m_pitch < -XM_PIDIV2)
-            m_pitch = -XM_PIDIV2;
-        else
+        if (mouseRelativeMovement.X != mouseLastState.X || mouseRelativeMovement.Y != mouseLastState.Y)
         {
-            if (mouseRelativeMovement.X != mouseLastState.X || mouseRelativeMovement.Y != mouseLastState.Y)
-            {
-                m_yaw += mouseRelativeMovement.X * m_rotationSpeed * deltaTime;
-                m_pitch += mouseRelativeMovement.Y * m_rotationSpeed * deltaTime;
+            m_yaw += mouseRelativeMovement.X * m_rotationSpeed * deltaTime;
+            m_pitch += mouseRelativeMovement.Y * m_rotationSpeed * deltaTime;
 
-                mouseLastState = mouseRelativeMovement;
-            }
+            mouseLastState = mouseRelativeMovement;
+
+            if (m_pitch > XM_PIDIV2)
+                m_pitch = XM_PIDIV2;
+            else if (m_pitch < -XM_PIDIV2)
+                m_pitch = -XM_PIDIV2;
         }
 
         //keyboard input

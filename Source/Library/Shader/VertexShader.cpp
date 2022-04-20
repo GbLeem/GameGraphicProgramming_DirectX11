@@ -44,18 +44,17 @@ namespace library
 
         if (FAILED(hr))
         {
-            MessageBox(nullptr,
-                L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+           MessageBox(nullptr, L"Vertex Shader compile Error", L"Error", MB_OK);
             return hr;
         }
 
         //Create the vertex shader
-        hr = pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, GetVertexShader().GetAddressOf());
+        hr = pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, m_vertexShader.GetAddressOf());
 
         if (FAILED(hr))
             return hr;
 
-        //Define the input layout (add texture coordinates)
+        //Define the input layout (add texture/normal coordinates)
         D3D11_INPUT_ELEMENT_DESC aLayouts[] =
         {
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -66,7 +65,7 @@ namespace library
         UINT uNumElements = ARRAYSIZE(aLayouts);
 
         //Create the input layout
-        hr = pDevice->CreateInputLayout(aLayouts, uNumElements, pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), GetVertexLayout().GetAddressOf());
+        hr = pDevice->CreateInputLayout(aLayouts, uNumElements, pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), m_vertexLayout.GetAddressOf());
 
         if (FAILED(hr))
             return hr;

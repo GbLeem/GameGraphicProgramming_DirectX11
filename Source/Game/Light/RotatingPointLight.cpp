@@ -16,7 +16,6 @@ M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 RotatingPointLight::RotatingPointLight(_In_ const XMFLOAT4& position, _In_ const XMFLOAT4& color)
     :PointLight(position,color)
 {
-
 }
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

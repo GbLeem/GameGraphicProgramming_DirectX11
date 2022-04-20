@@ -44,8 +44,7 @@ namespace library
 
         if (FAILED(hr))
         {
-            MessageBox(nullptr,
-                L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+            MessageBox(nullptr, L"Pixel Shader compile Error", L"Error", MB_OK);
             return hr;
         }
 

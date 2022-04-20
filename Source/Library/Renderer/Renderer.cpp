@@ -220,7 +220,7 @@ namespace library
             return hr;
         }
 
-        m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
+        //m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
 
         // Setup the viewport
         D3D11_VIEWPORT vp;
@@ -319,11 +319,11 @@ namespace library
         cb1.Projection = XMMatrixTranspose(m_projection);
         m_immediateContext->UpdateSubresource(m_cbChangeOnResize.Get(), 0, nullptr, &cb1, 0, 0);
 
-        //initialize camera 
+        //initialize camera(create constant buffer - view matrix)
         m_camera.Initialize(m_d3dDevice.Get());
 
         //===============================================================
-        //create Light constant buffer
+        //create constant buffer deals with lights
         D3D11_BUFFER_DESC b3 =
         {
             .ByteWidth = sizeof(CBLights),
@@ -337,10 +337,6 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        // Setup our lighting parameters
-    /*    CBLights cb3;
-        cb3.LightColors;
-        cb3.LightPositions;*/
         return S_OK;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -391,12 +387,14 @@ namespace library
     --------------------------------------------------------------------*/
     HRESULT Renderer::AddPointLight(_In_ size_t index, _In_ const std::shared_ptr<PointLight>& pPointLight)
     {
-        for (UINT i = 0; i < NUM_LIGHTS; ++i)
+        if (index >= NUM_LIGHTS)
+            return E_FAIL;
+        else
         {
-            if (m_aPointLights[index] == NULL)
-                m_aPointLights[index] = pPointLight;
+            m_aPointLights[index] = pPointLight;
+            return S_OK;
         }
-        return E_FAIL;
+
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -493,6 +491,11 @@ namespace library
         }
 
         m_camera.Update(deltaTime);
+
+        for (auto Lightiter : m_aPointLights)
+        {
+            Lightiter->Update(deltaTime);
+        }
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::Render
@@ -512,9 +515,19 @@ namespace library
 
         //create camera constant buffer and update
         CBChangeOnCameraMovement cb0;
-        cb0.View = XMMatrixTranspose(m_camera.GetView());
+        cb0.View = XMMatrixTranspose(m_camera.GetView());               
+
+        //cb0.CameraPosition; ??????? 어케 초기화하지
         m_immediateContext->UpdateSubresource(m_camera.GetConstantBuffer().Get(), 0, nullptr, &cb0, 0, 0);
 
+        CBLights cb3;
+        for (UINT i = 0; i < NUM_LIGHTS; ++i)
+        {
+            cb3.LightColors[i] = m_aPointLights[i]->GetColor();
+            cb3.LightPositions[i] = m_aPointLights[i]->GetPosition();
+        }
+
+        m_immediateContext->UpdateSubresource(m_cbLights.Get(), 0, nullptr, &cb3, 0, 0);
 
         //create light constant buffer
         for (auto Renderableiter : m_renderables)
@@ -542,24 +555,22 @@ namespace library
 
             //set shader
             m_immediateContext->VSSetShader(Renderableiter.second->GetVertexShader().Get(), nullptr, 0);
-            m_immediateContext->PSSetShader(Renderableiter.second->GetPixelShader().Get(), nullptr, 0);
 
             //set constant buffer
             m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
 
-            //m_immediateContext->PSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
+            //Texture resource view of the renderable must be set into the pixel shader
+            m_immediateContext->PSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
+
+            m_immediateContext->PSSetShader(Renderableiter.second->GetPixelShader().Get(), nullptr, 0);
 
             //<set shader resource and samplers>
-            //Texture resource view of the renderable must be set into the pixel shader
 
-            CBLights cb3;
-            
-            //cb3.LightColors = Renderableiter.second->GetOutputColor;
-
-
-            //ADD Hastexture????
+            //use texture 
             if (Renderableiter.second->HasTexture())
             {
                 m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetTextureResourceView().GetAddressOf());
@@ -567,7 +578,6 @@ namespace library
                 //Sampler state of the renderable must be set into the pixel shader
                 m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetSamplerState().GetAddressOf());
             }
-            
             //render the triangles
             m_immediateContext->DrawIndexed(Renderableiter.second->GetNumIndices(), 0, 0);
         }
@@ -633,7 +643,6 @@ namespace library
                 return S_OK;
             }
         }
-        return E_FAIL;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::GetDriverType
