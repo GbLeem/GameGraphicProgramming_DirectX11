@@ -168,11 +168,11 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
    }
 
 
-   float3 diffuse; 
+   float3 diffuse; //if dot product result is negative number, clamp to 0 !
    for(uint i = 0; i < NUM_LIGHTS; ++i)
    {
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
-        diffuse += dot(input.Normal, -lightDirection) * LightColors[i] * txDiffuse.Sample(samLinear, input.TexCoord);
+        diffuse += max(dot(input.Normal, -lightDirection),0.0f) * LightColors[i] * txDiffuse.Sample(samLinear, input.TexCoord);
    }
 
    float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);

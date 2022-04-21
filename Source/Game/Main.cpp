@@ -130,7 +130,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    std::shared_ptr<Cube> phongCube = std::make_shared<Cube>(L"seafloor.dds");
+    std::shared_ptr<Cube> phongCube = std::make_shared<Cube>(L"unreal.dds");
     if (FAILED(game->GetRenderer()->AddRenderable(L"PhongCube", phongCube)))
     {
         return 0;
