@@ -144,6 +144,24 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+
+    /*std::shared_ptr<Cube> phongCube2 = std::make_shared<Cube>(L"unreal.dds");
+    phongCube->Translate(XMVectorSet(0.0f, 3.0f, 0.0f, 0.0f));
+    if (FAILED(game->GetRenderer()->AddRenderable(L"PhongCube2", phongCube2)))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"PhongCube2", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"PhongCube2", L"PhongShader")))
+    {
+        return 0;
+    }*/
+
+
+
     if (FAILED(game->Initialize(hInstance, nCmdShow)))
     {
         return 0;

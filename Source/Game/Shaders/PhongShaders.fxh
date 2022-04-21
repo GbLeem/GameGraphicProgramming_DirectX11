@@ -131,11 +131,9 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
 
-    output.Normal = normalize( mul (float4 (input.Normal, 1) ,World).xyz );
-
-    output.WorldPosition = mul( input.Position, World);
-
     output.TexCoord = input.TexCoord;
+    output.Normal = normalize( mul (float4 (input.Normal, 1) ,World).xyz );
+    output.WorldPosition = mul( input.Position, World);
 
     return output;
 }
@@ -148,7 +146,7 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
     output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
-
+    
     return output;
 }
 
@@ -160,30 +158,39 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 --------------------------------------------------------------------*/
 float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 {
-   float3 ambient = float3(0.1f,0.1f,0.1f);
+   //float3 emissive = float3(0.1f,0.1f,0.1f);
 
-    float3 diffuse;
+   float3 ambient;
 
-    for(uint i = 0; i < 2; ++i)
-    {
+   for(uint i = 0; i < NUM_LIGHTS; ++i)
+   {
+       ambient += float3(0.2f, 0.2f, 0.2f) * LightColors[i] * txDiffuse.Sample(samLinear, input.TexCoord);    
+   }
+
+
+   float3 diffuse; 
+   for(uint i = 0; i < NUM_LIGHTS; ++i)
+   {
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
-        diffuse += dot(input.Normal, -lightDirection) * LightColors[i].xyz ;
-    }
+        diffuse += dot(input.Normal, -lightDirection) * LightColors[i] * txDiffuse.Sample(samLinear, input.TexCoord);
+   }
 
-    float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);
-    float3 specular;
+   float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);
+   float3 specular;
 
-    for(uint i = 0; i < 2; ++i)
-    {
+   for(uint i = 0; i < NUM_LIGHTS; ++i)
+   {
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
         float3 reflectDirection = reflect(lightDirection, input.Normal);
-        specular += pow(saturate(dot(-viewDirection, reflectDirection)), 20.0f) * LightColors[i] ;
+        specular += pow(saturate(dot(-viewDirection, reflectDirection)), 20.f) * LightColors[i] * txDiffuse.Sample(samLinear, input.TexCoord);
+   }
 
-    }
+   //return float4(saturate(ambient),1.0f);
+   //return float4(saturate(diffuse),1.0f) ;
+   //return float4(saturate(diffuse),1.0f) + float4(saturate(ambient),1.0f);
+    return float4(ambient + diffuse + specular ,1.0f);
+    //return float4((viewDirection + 1.0f) / 2.0f, 1.0f);
 
-    //return float4(saturate(diffuse),1) + float4(ambient, 1.0f);
-
-    return float4(saturate(ambient + diffuse + specular), 1.0f );
 }
 
 /*--------------------------------------------------------------------

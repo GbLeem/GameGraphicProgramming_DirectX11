@@ -516,8 +516,7 @@ namespace library
         //create camera constant buffer and update
         CBChangeOnCameraMovement cb0;
         cb0.View = XMMatrixTranspose(m_camera.GetView());               
-
-        //cb0.CameraPosition; ??????? 어케 초기화하지
+        XMStoreFloat4(&cb0.CameraPosition, m_camera.GetEye());
         m_immediateContext->UpdateSubresource(m_camera.GetConstantBuffer().Get(), 0, nullptr, &cb0, 0, 0);
 
         CBLights cb3;
