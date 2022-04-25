@@ -79,6 +79,19 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+    //add blinn-phong
+    std::shared_ptr<library::VertexShader>BlinnVertexShader = std::make_shared<library::VertexShader>(L"Shaders/PhongShaders.fxh", "VSBlinnPhong", "vs_5_0");
+    if (FAILED(game->GetRenderer()->AddVertexShader(L"Blinnshader", BlinnVertexShader)))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::PixelShader> BlinnPixelShader = std::make_shared<library::PixelShader>(L"Shaders/PhongShaders.fxh", "PSBlinnPhong", "ps_5_0");
+    if (FAILED(game->GetRenderer()->AddPixelShader(L"Blinnshader", BlinnPixelShader)))
+    {
+        return 0;
+    }
+
     XMFLOAT4 color;
     XMStoreFloat4(&color, Colors::White);
     std::shared_ptr<library::PointLight> pointLight = std::make_shared<library::PointLight>(
@@ -130,6 +143,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+    //Phong Cube
     std::shared_ptr<Cube> phongCube = std::make_shared<Cube>(L"unreal.dds");
     if (FAILED(game->GetRenderer()->AddRenderable(L"PhongCube", phongCube)))
     {
@@ -144,23 +158,20 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-
-    /*std::shared_ptr<Cube> phongCube2 = std::make_shared<Cube>(L"unreal.dds");
-    phongCube->Translate(XMVectorSet(0.0f, 3.0f, 0.0f, 0.0f));
-    if (FAILED(game->GetRenderer()->AddRenderable(L"PhongCube2", phongCube2)))
+    //Blinn-Phong Cube
+    /*std::shared_ptr<Cube> BlinnPhongCube = std::make_shared<Cube>(L"unreal.dds");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"BlinnCube", BlinnPhongCube)))
     {
         return 0;
     }
-    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"PhongCube2", L"PhongShader")))
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"BlinnCube", L"Blinnshader")))
     {
         return 0;
     }
-    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"PhongCube2", L"PhongShader")))
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"BlinnCube", L"Blinnshader")))
     {
         return 0;
     }*/
-
-
 
     if (FAILED(game->Initialize(hInstance, nCmdShow)))
     {
