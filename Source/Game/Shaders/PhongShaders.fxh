@@ -105,7 +105,7 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     output.Position = mul(output.Position, Projection);
 
     output.TexCoord = input.TexCoord;
-    output.Normal = normalize( mul (float4 (input.Normal, 1) ,World).xyz );
+    output.Normal = normalize( mul (float4 (input.Normal, 0) ,World).xyz );
     output.WorldPosition = mul( input.Position, World);
 
     return output;
@@ -150,7 +150,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
    {
         float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
         float3 reflectDirection = reflect(-lightDirection, input.Normal);
-        specular += pow(saturate(dot(viewDirection, reflectDirection)), 20.f) * LightColors[i].xyz * txDiffuse.Sample(samLinear, input.TexCoord);
+        specular += pow(saturate(dot(viewDirection, reflectDirection)), 20.0f) * LightColors[i].xyz * txDiffuse.Sample(samLinear, input.TexCoord);
    }
 
    return float4(ambient + diffuse + specular ,1.0f);
@@ -187,13 +187,13 @@ PS_BlinnPhong_INPUT VSBlinnPhong (VS_BlinnPhong_INPUT input)
     output.Position = mul(output.Position, Projection);
 
     output.TexCoord = input.TexCoord;
-    output.Normal = normalize( mul (float4 (input.Normal, 1) ,World).xyz );
+    output.Normal = normalize( mul (float4 (input.Normal, 1.0f) ,World).xyz );
     output.WorldPosition = mul( input.Position, World);
 
     return output;
 }
 
-float4 PSBlinnPhong(PS_PHONG_INPUT input) : SV_TARGET
+float4 PSBlinnPhong(PS_BlinnPhong_INPUT input) : SV_TARGET
 {
    //ambient
    float3 ambient = float3(0.2f, 0.2f, 0.2f) * txDiffuse.Sample(samLinear, input.TexCoord);
@@ -216,7 +216,7 @@ float4 PSBlinnPhong(PS_PHONG_INPUT input) : SV_TARGET
         float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
 
         h = normalize(lightDirection + viewDirection);
-        specular += min(pow(saturate(dot(h, input.Normal)), 80.0f), 1.) * LightColors[i].xyz* txDiffuse.Sample(samLinear, input.TexCoord);
+        specular += min(pow(saturate(dot(h, input.Normal)), 80.0f), 1.0f) * LightColors[i].xyz* txDiffuse.Sample(samLinear, input.TexCoord);
    }
    
    return float4(ambient + diffuse + specular ,1.0f);

@@ -47,19 +47,17 @@
 
 constexpr LPCWSTR PSZ_COURSE_TITLE = L"Game Graphics Programming";
 
-#ifndef NUM_LIGHTS
-#define NUM_LIGHTS (2)
-#endif
-
 using namespace Microsoft::WRL;
 using namespace DirectX;
 
 namespace library
 {
-    /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
-        Struct:   DirectionsInput
+#define ASSIMP_LOAD_FLAGS (aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_ConvertToLeftHanded)
 
-        Summary:  Data structure that stores keyboard movement data
+    /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
+      Class:    DirectionsInput
+
+      Summary:  Data structure that stores keyboard movement data
     S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
     struct DirectionsInput
     {
@@ -72,9 +70,9 @@ namespace library
     };
 
     /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
-        Struct:   MouseRelativeMovement
+      Class:    MouseRelativeMovement
 
-        Summary:  Data structure that stores mouse relative movement data
+      Summary:  Data structure that stores mouse relative movement data
     S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
     struct MouseRelativeMovement
     {

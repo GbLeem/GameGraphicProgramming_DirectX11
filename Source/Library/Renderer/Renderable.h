@@ -1,10 +1,13 @@
 /*+===================================================================
   File:      RENDERABLE.H
+
   Summary:   Renderable header file contains declarations of
              Renderable class used for the lab samples of Game
              Graphics Programming course.
+
   Classes: Renderable
-  � 2022 Kyung Hee University
+
+  © 2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
 
@@ -13,48 +16,60 @@
 #include "Renderer/DataTypes.h"
 #include "Shader/PixelShader.h"
 #include "Shader/VertexShader.h"
+#include "Texture/Material.h"
 
 namespace library
 {
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-        Class:    Renderable
-        Summary:  Base class for all renderable classes
-        Methods:  Initialize
-                    Pure virtual function that initializes the object
-                  Update
-                    Pure virtual function that updates the object each
-                    frame
-                  GetVertexBuffer
-                    Returns the vertex buffer
-                  GetIndexBuffer
-                    Returns the index buffer
-                  GetConstantBuffer
-                    Returns the constant buffer
-                  GetWorldMatrix
-                    Returns the world matrix
-                  GetTextureResourceView
-                    Returns the texture resource view
-                  GetSamplerState
-                    Returns the sampler state
-                  GetOutputColor
-                    Returns the output color
-                  HasTexture
-                    Returns whether the renderable has texture
-                  GetNumVertices
-                    Pure virtual function that returns the number of
-                    vertices
-                  GetNumIndices
-                    Pure virtual function that returns the number of
-                    indices
-                  Renderable
-                    Constructor.
-                  ~Renderable
-                    Destructor.
+      Class:    Renderable
+
+      Summary:  Base class for all renderable classes
+
+      Methods:  Initialize
+                  Pure virtual function that initializes the object
+                Update
+                  Pure virtual function that updates the object each
+                  frame
+                GetVertexBuffer
+                  Returns the vertex buffer
+                GetIndexBuffer
+                  Returns the index buffer
+                GetConstantBuffer
+                  Returns the constant buffer
+                GetWorldMatrix
+                  Returns the world matrix
+                GetNumVertices
+                  Pure virtual function that returns the number of
+                  vertices
+                GetNumIndices
+                  Pure virtual function that returns the number of
+                  indices
+                Renderable
+                  Constructor.
+                ~Renderable
+                  Destructor.
     C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
     class Renderable
     {
+    protected:
+#define INVALID_MATERIAL (0xFFFFFFFF)
+        struct BasicMeshEntry
+        {
+            BasicMeshEntry()
+                : uNumIndices(0u)
+                , uBaseVertex(0u)
+                , uBaseIndex(0u)
+                , uMaterialIndex(INVALID_MATERIAL)
+            {
+            }
+
+            UINT uNumIndices;
+            UINT uBaseVertex;
+            UINT uBaseIndex;
+            UINT uMaterialIndex;
+        };
+
     public:
-        Renderable(_In_ const std::filesystem::path& textureFilePath);
         Renderable(_In_ const XMFLOAT4& outputColor);
         Renderable(const Renderable& other) = delete;
         Renderable(Renderable&& other) = delete;
@@ -74,11 +89,12 @@ namespace library
         ComPtr<ID3D11Buffer>& GetVertexBuffer();
         ComPtr<ID3D11Buffer>& GetIndexBuffer();
         ComPtr<ID3D11Buffer>& GetConstantBuffer();
+
         const XMMATRIX& GetWorldMatrix() const;
-        ComPtr<ID3D11ShaderResourceView>& GetTextureResourceView();
-        ComPtr<ID3D11SamplerState>& GetSamplerState();
         const XMFLOAT4& GetOutputColor() const;
         BOOL HasTexture() const;
+        const Material& GetMaterial(UINT uIndex) const;
+        const BasicMeshEntry& GetMesh(UINT uIndex) const;
 
         void RotateX(_In_ FLOAT angle);
         void RotateY(_In_ FLOAT angle);
@@ -89,24 +105,30 @@ namespace library
 
         virtual UINT GetNumVertices() const = 0;
         virtual UINT GetNumIndices() const = 0;
+
+        UINT GetNumMeshes() const;
+        UINT GetNumMaterials() const;
     protected:
         const virtual SimpleVertex* getVertices() const = 0;
         virtual const WORD* getIndices() const = 0;
         HRESULT initialize(
             _In_ ID3D11Device* pDevice,
             _In_ ID3D11DeviceContext* pImmediateContext
-        );
+            );
 
+    protected:
         ComPtr<ID3D11Buffer> m_vertexBuffer;
         ComPtr<ID3D11Buffer> m_indexBuffer;
         ComPtr<ID3D11Buffer> m_constantBuffer;
-        ComPtr<ID3D11ShaderResourceView> m_textureRV;
-        ComPtr<ID3D11SamplerState> m_samplerLinear;
+
+        std::vector<BasicMeshEntry> m_aMeshes;
+        std::vector<Material> m_aMaterials;
+
         std::shared_ptr<VertexShader> m_vertexShader;
         std::shared_ptr<PixelShader> m_pixelShader;
-        std::filesystem::path m_textureFilePath;
+
         XMFLOAT4 m_outputColor;
-        BOOL m_bHasTextures;
+        BYTE m_padding[8];
         XMMATRIX m_world;
     };
 }
