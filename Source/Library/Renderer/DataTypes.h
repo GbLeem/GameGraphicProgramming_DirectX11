@@ -2,6 +2,11 @@
 
 #include "Common.h"
 
+
+#ifndef NUM_LIGHTS
+#define NUM_LIGHTS (2)
+#endif
+
 namespace library
 {
     /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S

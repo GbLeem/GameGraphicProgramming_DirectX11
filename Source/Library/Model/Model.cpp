@@ -19,7 +19,14 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Model::Model definition (remove the comment)
     --------------------------------------------------------------------*/
+    Model::Model(_In_ const std::filesystem::path& filePath)
+        :Renderable(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f))
+        ,m_filePath(filePath)
+        ,m_aVertices()
+        ,m_aIndices()
+    {
 
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::Initialize
 
@@ -119,6 +126,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Model::countVerticesAndIndices definition (remove the comment)
     --------------------------------------------------------------------*/
+    void Model::countVerticesAndIndices(_Inout_ UINT& uOutNumVertices, _Inout_ UINT& uOutNumIndices, _In_ const aiScene* pScene)
+    {
+
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::getVertices
@@ -185,7 +196,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Model::initFromScene definition (remove the comment)
     --------------------------------------------------------------------*/
+    HRESULT Model::initFromScene(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext, _In_ const aiScene* pScene, _In_ const std::filesystem::path& filePath)
+    {
 
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::initMaterials
 
@@ -238,6 +252,15 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Model::initSingleMesh definition (remove the comment)
     --------------------------------------------------------------------*/
+    void Model::initSingleMesh(_In_ const aiMesh* pMesh)
+    {
+
+    }
+
+    void Model::loadColors(_In_ const aiMaterial* pMaterial, _In_ UINT uIndex)
+    {
+
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::loadDiffuseTexture
@@ -417,4 +440,8 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Model::reserveSpace definition (remove the comment)
     --------------------------------------------------------------------*/
+    void Model::reserveSpace(_In_ UINT uNumVertices, _In_ UINT uNumIndices)
+    {
+
+    }
 }

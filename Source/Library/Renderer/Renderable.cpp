@@ -14,15 +14,27 @@ namespace library
       Args:     const XMFLOAT4& outputColor
                   Default color of the renderable
 
-      Modifies: [m_vertexBuffer, m_indexBuffer, m_constantBuffer, 
-                 m_textureRV, m_samplerLinear, m_vertexShader, 
+      Modifies: [m_vertexBuffer, m_indexBuffer, m_constantBuffer,
+                 m_textureRV, m_samplerLinear, m_vertexShader,
                  m_pixelShader, m_textureFilePath, m_outputColor,
                  m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     /*--------------------------------------------------------------------
       TODO: Renderable::Renderable definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    Renderable::Renderable(_In_ const XMFLOAT4& outputColor)
+        :m_vertexBuffer(0)
+        ,m_indexBuffer(0)
+        ,m_constantBuffer(0)
+        ,m_aMeshes(0)
+        ,m_aMaterials(0)
+        ,m_vertexShader(0)
+        ,m_pixelShader(0)
+        ,m_outputColor(outputColor)
+        ,m_padding{}
+        ,m_world(0)
+    {
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::initialize
 
@@ -41,7 +53,101 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::initialize definition (remove the comment)
     --------------------------------------------------------------------*/
+    HRESULT Renderable::initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
+    {
+        HRESULT hr = S_OK;
 
+        //Create vertex buffer
+        D3D11_BUFFER_DESC bd =
+        {
+            .ByteWidth = sizeof(SimpleVertex) * GetNumVertices(),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_VERTEX_BUFFER,
+            .CPUAccessFlags = 0,
+            .MiscFlags = 0,
+            .StructureByteStride = 0
+        };
+        D3D11_SUBRESOURCE_DATA initData =
+        {
+            .pSysMem = getVertices(),
+            .SysMemPitch = 0,
+            .SysMemSlicePitch = 0
+        };
+
+        hr = pDevice->CreateBuffer(&bd, &initData, m_vertexBuffer.GetAddressOf());
+
+        if (FAILED(hr))
+            return hr;
+
+        //Create an Index Buffer
+        D3D11_BUFFER_DESC bd2 =
+        {
+            .ByteWidth = sizeof(WORD) * GetNumIndices(),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_INDEX_BUFFER,
+            .CPUAccessFlags = 0,
+            .MiscFlags = 0,
+            .StructureByteStride = 0
+        };
+
+        D3D11_SUBRESOURCE_DATA initData2 =
+        {
+            .pSysMem = getIndices(),
+            .SysMemPitch = 0,
+            .SysMemSlicePitch = 0,
+        };
+
+        hr = pDevice->CreateBuffer(&bd2, &initData2, m_indexBuffer.GetAddressOf());
+
+        if (FAILED(hr))
+            return hr;
+
+        //==================================================
+         //create constant buffer deals with world matrix
+        D3D11_BUFFER_DESC b2 =
+        {
+            .ByteWidth = sizeof(CBChangesEveryFrame),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_CONSTANT_BUFFER,
+            .CPUAccessFlags = 0,
+            .MiscFlags = 0,
+            .StructureByteStride = 0
+        };
+
+        hr = pDevice->CreateBuffer(&b2, nullptr, m_constantBuffer.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        //Load the Texture
+
+        //if (m_bHasTextures)
+        //{
+        //    hr = CreateDDSTextureFromFile(pDevice, m_textureFilePath.filename().wstring().c_str(), nullptr, m_textureRV.GetAddressOf());
+        //    if (FAILED(hr))
+        //    {
+        //        MessageBox(nullptr, L"no texture", L"Error", MB_OK);
+        //        return hr;
+        //    }
+
+        //    //create the simple state
+        //    D3D11_SAMPLER_DESC sampDesc =
+        //    {
+        //        .Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+        //        .AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
+        //        .AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
+        //        .AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
+        //        .ComparisonFunc = D3D11_COMPARISON_NEVER,
+        //        .MinLOD = 0,
+        //        .MaxLOD = D3D11_FLOAT32_MAX
+        //    };
+
+        //    hr = pDevice->CreateSamplerState(&sampDesc, m_samplerLinear.GetAddressOf());
+        //    if (FAILED(hr))
+        //        return hr;
+        //}
+
+        return S_OK;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::SetVertexShader
 
@@ -56,7 +162,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::SetVertexShader definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::SetVertexShader(_In_ const std::shared_ptr<VertexShader>& vertexShader)
+    {
+        m_vertexShader = vertexShader;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::SetPixelShader
 
@@ -71,7 +180,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::SetPixelShader definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::SetPixelShader(_In_ const std::shared_ptr<PixelShader>& pixelShader)
+    {
+        m_pixelShader = pixelShader;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetVertexShader
 
@@ -83,7 +195,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetVertexShader definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11VertexShader>& Renderable::GetVertexShader()
+    {
+        return m_vertexShader->GetVertexShader();
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetPixelShader
 
@@ -95,7 +210,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetPixelShader definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11PixelShader>& Renderable::GetPixelShader()
+    {
+        return m_pixelShader->GetPixelShader();
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetVertexLayout
 
@@ -107,7 +225,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetVertexLayout definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11InputLayout>& Renderable::GetVertexLayout()
+    {
+        return m_vertexShader->GetVertexLayout();
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetVertexBuffer
 
@@ -119,7 +240,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetVertexBuffer definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11Buffer>& Renderable::GetVertexBuffer()
+    {
+        return m_vertexBuffer;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetIndexBuffer
 
@@ -131,7 +255,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetIndexBuffer definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11Buffer>& Renderable::GetIndexBuffer()
+    {
+        return m_indexBuffer;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetConstantBuffer
 
@@ -143,7 +270,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetConstantBuffer definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11Buffer>& Renderable::GetConstantBuffer()
+    {
+        return m_constantBuffer;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetWorldMatrix
 
@@ -155,7 +285,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetWorldMatrix definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    const XMMATRIX& Renderable::GetWorldMatrix() const
+    {
+        return m_world;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetOutputColor
 
@@ -167,6 +300,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetOutputColor definition (remove the comment)
     --------------------------------------------------------------------*/
+    const XMFLOAT4& Renderable::GetOutputColor() const
+    {
+        return m_outputColor;
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::HasTexture
@@ -179,7 +316,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::HasTexture definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    BOOL Renderable::HasTexture() const
+    {
+        return true;
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetMaterial
 
@@ -223,7 +363,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::RotateX definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::RotateX(_In_ FLOAT angle)
+    {
+        m_world *= XMMatrixRotationX(angle);
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::RotateY
 
@@ -237,7 +380,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::RotateY definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::RotateY(_In_ FLOAT angle)
+    {
+        m_world *= XMMatrixRotationY(angle);
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::RotateZ
 
@@ -251,7 +397,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::RotateZ definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::RotateZ(_In_ FLOAT angle)
+    {
+        m_world *= XMMatrixRotationZ(angle);
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::RotateRollPitchYaw
 
@@ -269,7 +418,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::RotateRollPitchYaw definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::RotateRollPitchYaw(_In_ FLOAT pitch, _In_ FLOAT yaw, _In_ FLOAT roll)
+    {
+        m_world *= XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::Scale
 
@@ -287,7 +439,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::Scale definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::Scale(_In_ FLOAT scaleX, _In_ FLOAT scaleY, _In_ FLOAT scaleZ)
+    {
+        m_world *= XMMatrixScaling(scaleX, scaleY, scaleZ);
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::Translate
 
@@ -301,7 +456,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::Translate definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    void Renderable::Translate(_In_ const XMVECTOR& offset)
+    {
+        m_world *= XMMatrixTranslationFromVector(offset);
+    }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetNumMeshes
 
