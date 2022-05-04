@@ -89,7 +89,7 @@ namespace library
             _In_ const std::filesystem::path& filePath
             );
         void initSingleMesh(_In_ const aiMesh* pMesh);
-        void loadColors(_In_ const aiMaterial* pMaterial, _In_ UINT uIndex);
+        //void loadColors(_In_ const aiMaterial* pMaterial, _In_ UINT uIndex);
         HRESULT loadDiffuseTexture(
             _In_ ID3D11Device* pDevice,
             _In_ ID3D11DeviceContext* pImmediateContext,

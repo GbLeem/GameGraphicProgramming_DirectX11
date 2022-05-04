@@ -23,16 +23,16 @@ namespace library
       TODO: Renderable::Renderable definition (remove the comment)
     --------------------------------------------------------------------*/
     Renderable::Renderable(_In_ const XMFLOAT4& outputColor)
-        :m_vertexBuffer(0)
-        ,m_indexBuffer(0)
-        ,m_constantBuffer(0)
-        ,m_aMeshes(0)
-        ,m_aMaterials(0)
-        ,m_vertexShader(0)
-        ,m_pixelShader(0)
+        :m_vertexBuffer()
+        ,m_indexBuffer()
+        ,m_constantBuffer()
+        ,m_aMeshes()
+        ,m_aMaterials()
+        ,m_vertexShader()
+        ,m_pixelShader()
         ,m_outputColor(outputColor)
-        ,m_padding{}
-        ,m_world(0)
+        ,m_padding()
+        ,m_world(XMMatrixIdentity())
     {
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -117,35 +117,7 @@ namespace library
         hr = pDevice->CreateBuffer(&b2, nullptr, m_constantBuffer.GetAddressOf());
         if (FAILED(hr))
             return hr;
-
-        //Load the Texture
-
-        //if (m_bHasTextures)
-        //{
-        //    hr = CreateDDSTextureFromFile(pDevice, m_textureFilePath.filename().wstring().c_str(), nullptr, m_textureRV.GetAddressOf());
-        //    if (FAILED(hr))
-        //    {
-        //        MessageBox(nullptr, L"no texture", L"Error", MB_OK);
-        //        return hr;
-        //    }
-
-        //    //create the simple state
-        //    D3D11_SAMPLER_DESC sampDesc =
-        //    {
-        //        .Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
-        //        .AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
-        //        .AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
-        //        .AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
-        //        .ComparisonFunc = D3D11_COMPARISON_NEVER,
-        //        .MinLOD = 0,
-        //        .MaxLOD = D3D11_FLOAT32_MAX
-        //    };
-
-        //    hr = pDevice->CreateSamplerState(&sampDesc, m_samplerLinear.GetAddressOf());
-        //    if (FAILED(hr))
-        //        return hr;
-        //}
-
+        
         return S_OK;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -318,7 +290,9 @@ namespace library
     --------------------------------------------------------------------*/
     BOOL Renderable::HasTexture() const
     {
-        return true;
+        if(!m_aMaterials.empty())
+            return TRUE;
+        return FALSE;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetMaterial
@@ -360,9 +334,6 @@ namespace library
 
       Modifies: [m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderable::RotateX definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderable::RotateX(_In_ FLOAT angle)
     {
         m_world *= XMMatrixRotationX(angle);
@@ -377,9 +348,6 @@ namespace library
 
       Modifies: [m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderable::RotateY definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderable::RotateY(_In_ FLOAT angle)
     {
         m_world *= XMMatrixRotationY(angle);
@@ -394,9 +362,6 @@ namespace library
 
       Modifies: [m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderable::RotateZ definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderable::RotateZ(_In_ FLOAT angle)
     {
         m_world *= XMMatrixRotationZ(angle);
@@ -415,9 +380,6 @@ namespace library
 
       Modifies: [m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderable::RotateRollPitchYaw definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderable::RotateRollPitchYaw(_In_ FLOAT pitch, _In_ FLOAT yaw, _In_ FLOAT roll)
     {
         m_world *= XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
@@ -436,9 +398,6 @@ namespace library
 
       Modifies: [m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderable::Scale definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderable::Scale(_In_ FLOAT scaleX, _In_ FLOAT scaleY, _In_ FLOAT scaleZ)
     {
         m_world *= XMMatrixScaling(scaleX, scaleY, scaleZ);
@@ -453,9 +412,6 @@ namespace library
 
       Modifies: [m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderable::Translate definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderable::Translate(_In_ const XMVECTOR& offset)
     {
         m_world *= XMMatrixTranslationFromVector(offset);

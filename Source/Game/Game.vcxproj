@@ -22,6 +22,7 @@
     <FxCompile Include="Shaders\VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="nanosuit\nanosuit.mtl" />
     <None Include="Shaders\PhongShaders.fxh" />
     <None Include="Shaders\Shaders.fxh" />
   </ItemGroup>
@@ -32,6 +33,37 @@
     <ClInclude Include="Light\RotatingPointLight.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="nanosuit\arm_dif.png" />
+    <Image Include="nanosuit\arm_showroom_ddn.png" />
+    <Image Include="nanosuit\arm_showroom_refl.png" />
+    <Image Include="nanosuit\arm_showroom_spec.png" />
+    <Image Include="nanosuit\back.jpg" />
+    <Image Include="nanosuit\body_dif.png" />
+    <Image Include="nanosuit\body_showroom_ddn.png" />
+    <Image Include="nanosuit\body_showroom_refl.png" />
+    <Image Include="nanosuit\body_showroom_spec.png" />
+    <Image Include="nanosuit\cell_arm_alpha.png" />
+    <Image Include="nanosuit\cell_body_alpha.png" />
+    <Image Include="nanosuit\cell_ddn.png" />
+    <Image Include="nanosuit\cell_hand_alpha.png" />
+    <Image Include="nanosuit\cell_helmet_alpha.png" />
+    <Image Include="nanosuit\cell_leg_alpha.png" />
+    <Image Include="nanosuit\front.jpg" />
+    <Image Include="nanosuit\glass_ddn.png" />
+    <Image Include="nanosuit\glass_dif.png" />
+    <Image Include="nanosuit\glass_refl.png" />
+    <Image Include="nanosuit\hand_dif.png" />
+    <Image Include="nanosuit\hand_showroom_ddn.png" />
+    <Image Include="nanosuit\hand_showroom_refl.png" />
+    <Image Include="nanosuit\hand_showroom_spec.png" />
+    <Image Include="nanosuit\helmet_diff.png" />
+    <Image Include="nanosuit\helmet_showroom_ddn.png" />
+    <Image Include="nanosuit\helmet_showroom_refl.png" />
+    <Image Include="nanosuit\helmet_showroom_spec.png" />
+    <Image Include="nanosuit\leg_dif.png" />
+    <Image Include="nanosuit\leg_showroom_ddn.png" />
+    <Image Include="nanosuit\leg_showroom_refl.png" />
+    <Image Include="nanosuit\leg_showroom_spec.png" />
     <Image Include="seafloor.dds" />
     <Image Include="texture\fire.dds" />
     <Image Include="unreal.dds" />

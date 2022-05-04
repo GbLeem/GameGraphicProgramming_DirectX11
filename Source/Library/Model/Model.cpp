@@ -24,6 +24,7 @@ namespace library
         ,m_filePath(filePath)
         ,m_aVertices()
         ,m_aIndices()
+        ,m_padding()
     {
 
     }
@@ -128,7 +129,16 @@ namespace library
     --------------------------------------------------------------------*/
     void Model::countVerticesAndIndices(_Inout_ UINT& uOutNumVertices, _Inout_ UINT& uOutNumIndices, _In_ const aiScene* pScene)
     {
+        for (UINT i = 0u; i < pScene->mNumMeshes; ++i)
+        {
+            m_aMeshes[i].uMaterialIndex = pScene->mMeshes[i]->mMaterialIndex;
+            m_aMeshes[i].uNumIndices = pScene->mMeshes[i]->mNumFaces * 3u;
+            m_aMeshes[i].uBaseVertex = uOutNumVertices;
+            m_aMeshes[i].uBaseIndex = uOutNumIndices;
 
+            uOutNumVertices += pScene->mMeshes[i]->mNumVertices;
+            uOutNumIndices += m_aMeshes[i].uNumIndices;
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -198,7 +208,21 @@ namespace library
     --------------------------------------------------------------------*/
     HRESULT Model::initFromScene(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext, _In_ const aiScene* pScene, _In_ const std::filesystem::path& filePath)
     {
+        HRESULT hr = S_OK;
 
+        m_aMeshes.resize(pScene->mNumMeshes);
+        m_aMaterials.resize(pScene->mNumMaterials);
+
+        UINT NumVertices = 0;
+        UINT NumIndices = 0;
+
+        countVerticesAndIndices(NumVertices, NumIndices, pScene);
+        reserveSpace(NumVertices, NumIndices);
+        initAllMeshes(pScene);
+        initMaterials(pDevice, pImmediateContext, pScene, filePath);
+        initialize(pDevice, pImmediateContext);
+        
+        return hr;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::initMaterials
@@ -254,13 +278,40 @@ namespace library
     --------------------------------------------------------------------*/
     void Model::initSingleMesh(_In_ const aiMesh* pMesh)
     {
+        const aiVector3D zero3d(0.0f, 0.0f, 0.0f);
 
+        for (UINT i = 0u; i < pMesh->mNumVertices; ++i)
+        {
+            const aiVector3D& position = pMesh->mVertices[i];
+            const aiVector3D& normal = pMesh->mNormals[i];
+            const aiVector3D& texCoord = pMesh->HasTextureCoords(0u) ? pMesh->mTextureCoords[0][i] : zero3d;
+
+            m_aVertices.push_back(
+                SimpleVertex
+                {
+                    .Position = XMFLOAT3(position.x,position.y,position.z),
+                    .TexCoord = XMFLOAT2(texCoord.x,texCoord.y),
+                    .Normal = XMFLOAT3(normal.x, normal.y, normal.z)                        
+                }
+            );
+        }
+
+        for (UINT i = 0u; i < pMesh->mNumFaces; ++i)
+        {
+            const aiFace& face = pMesh->mFaces[i];
+            assert(face.mNumIndices == 3u);
+
+            m_aIndices.push_back(static_cast<WORD>(face.mIndices[0]));
+            m_aIndices.push_back(static_cast<WORD>(face.mIndices[1]));
+            m_aIndices.push_back(static_cast<WORD>(face.mIndices[2]));
+        }
     }
 
-    void Model::loadColors(_In_ const aiMaterial* pMaterial, _In_ UINT uIndex)
+    //???//
+    /*void Model::loadColors(_In_ const aiMaterial* pMaterial, _In_ UINT uIndex)
     {
 
-    }
+    }*/
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::loadDiffuseTexture
@@ -442,6 +493,7 @@ namespace library
     --------------------------------------------------------------------*/
     void Model::reserveSpace(_In_ UINT uNumVertices, _In_ UINT uNumIndices)
     {
-
+        m_aVertices.reserve(uNumVertices);
+        m_aIndices.reserve(uNumIndices);
     }
 }

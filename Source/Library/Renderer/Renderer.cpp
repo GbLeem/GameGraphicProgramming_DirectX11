@@ -289,9 +289,6 @@ namespace library
             PixelShaderiter.second->Initialize(m_d3dDevice.Get());
         }
 
-        //set primitive topology
-        m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
         //=============================================================
         //create constant buffer deals with projection matrix
         D3D11_BUFFER_DESC b1 =
@@ -514,6 +511,9 @@ namespace library
             //set input layout
             m_immediateContext->IASetInputLayout(Renderableiter.second->GetVertexLayout().Get());
 
+            //set primitive topology
+            m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
             //create renderable constant buffer and update
             CBChangesEveryFrame cb2 =
             {
@@ -522,7 +522,6 @@ namespace library
             };
 
             m_immediateContext->UpdateSubresource(Renderableiter.second->GetConstantBuffer().Get(), 0, nullptr, &cb2, 0, 0);
-
 
             //set shader
             m_immediateContext->VSSetShader(Renderableiter.second->GetVertexShader().Get(), nullptr, 0);
@@ -536,22 +535,27 @@ namespace library
             m_immediateContext->PSSetShader(Renderableiter.second->GetPixelShader().Get(), nullptr, 0);
 
             m_immediateContext->PSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
-            //m_immediateContext->PSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->PSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
             m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
-
-
+            
             //<set shader resource and samplers>
-            //use texture 
+            // TODO : SET TEXURE!!!!!
+
             if (Renderableiter.second->HasTexture())
             {
-                m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetTextureResourceView().GetAddressOf());
-
-                //Sampler state of the renderable must be set into the pixel shader
-                m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetSamplerState().GetAddressOf());
+                for (UINT i = 0; i < Renderableiter.second->GetNumMeshes(); ++i)
+                {
+                    UINT j = Renderableiter.second->GetMesh(i).uMaterialIndex;
+                    //for (UINT j = Renderableiter.second->GetMesh(0).uMaterialIndex; j < Renderableiter.second->GetMesh(i).uMaterialIndex; ++j)
+                    //{   
+                        m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetMaterial(j).pDiffuse->GetTextureResourceView().GetAddressOf());
+                        m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetMaterial(j).pDiffuse->GetSamplerState().GetAddressOf());           
+                    //}
+                    m_immediateContext->DrawIndexed(Renderableiter.second->GetMesh(i).uNumIndices,Renderableiter.second->GetMesh(i).uBaseIndex,Renderableiter.second->GetMesh(i).uBaseVertex);
+                }
             }
-            //render the triangles
-            m_immediateContext->DrawIndexed(Renderableiter.second->GetNumIndices(), 0, 0);
+            else
+                m_immediateContext->DrawIndexed(Renderableiter.second->GetNumIndices(), 0, 0);
         }
         //Present the information rendered to the back buffer to the front buffer
         m_swapChain->Present(0, 0);

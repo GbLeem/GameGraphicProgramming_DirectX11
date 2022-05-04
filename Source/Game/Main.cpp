@@ -70,6 +70,59 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     /*--------------------------------------------------------------------
       TODO: Add a model and its vertex/pixel shader (remove the comment)
     --------------------------------------------------------------------*/
+    std::shared_ptr<library::VertexShader> phongVertexShader = std::make_shared<library::VertexShader>(L"Shaders/PhongShaders.fxh", "VSPhong", "vs_5_0");
+    if (FAILED(game->GetRenderer()->AddVertexShader(L"PhongShader", phongVertexShader)))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::PixelShader> phongPixelShader = std::make_shared<library::PixelShader>(L"Shaders/PhongShaders.fxh", "PSPhong", "ps_5_0");
+    if (FAILED(game->GetRenderer()->AddPixelShader(L"PhongShader", phongPixelShader)))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::Model> nanosuit = std::make_shared<library::Model>(L"nanosuit/nanosuit.obj");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"NanoSuit", nanosuit)))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"NanoSuit", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"NanoSuit", L"PhongShader")))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::VertexShader>BlinnVertexShader = std::make_shared<library::VertexShader>(L"Shaders/PhongShaders.fxh", "VSBlinnPhong", "vs_5_0");
+    if (FAILED(game->GetRenderer()->AddVertexShader(L"Blinnshader", BlinnVertexShader)))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::PixelShader> BlinnPixelShader = std::make_shared<library::PixelShader>(L"Shaders/PhongShaders.fxh", "PSBlinnPhong", "ps_5_0");
+    if (FAILED(game->GetRenderer()->AddPixelShader(L"Blinnshader", BlinnPixelShader)))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::Model> planet = std::make_shared<library::Model>(L"planet/planet.obj");
+    planet->Translate(XMVectorSet(5.f,5.f,-5.f,0.f));
+    if (FAILED(game->GetRenderer()->AddRenderable(L"Planet", planet)))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"Planet", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"Planet", L"PhongShader")))
+    {
+        return 0;
+    }
+
 
     XMFLOAT4 color;
     XMStoreFloat4(&color, Colors::White);

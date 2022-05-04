@@ -29,7 +29,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class BaseCube : public library::Renderable
 {
 public:
-    BaseCube(_In_ const std::filesystem::path& textureFilePath);
+    //BaseCube(_In_ const std::filesystem::path& textureFilePath);
     BaseCube(_In_ const XMFLOAT4& outputColor);
     BaseCube(const BaseCube& other) = delete;
     BaseCube(BaseCube&& other) = delete;
