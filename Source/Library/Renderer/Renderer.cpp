@@ -539,8 +539,6 @@ namespace library
             m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
             
             //<set shader resource and samplers>
-            // TODO : SET TEXURE!!!!!
-
             if (Renderableiter.second->HasTexture())
             {
                 for (UINT i = 0; i < Renderableiter.second->GetNumMeshes(); ++i)

@@ -67,9 +67,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    /*--------------------------------------------------------------------
-      TODO: Add a model and its vertex/pixel shader (remove the comment)
-    --------------------------------------------------------------------*/
+    //Add Model
     std::shared_ptr<library::VertexShader> phongVertexShader = std::make_shared<library::VertexShader>(L"Shaders/PhongShaders.fxh", "VSPhong", "vs_5_0");
     if (FAILED(game->GetRenderer()->AddVertexShader(L"PhongShader", phongVertexShader)))
     {

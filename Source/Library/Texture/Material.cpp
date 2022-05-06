@@ -9,9 +9,6 @@ namespace library
 
       Modifies: [pDiffuse, pSpecular].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Material::Material definition (remove the comment)
-    --------------------------------------------------------------------*/
     Material::Material()
         :pDiffuse()
         ,pSpecular()
