@@ -17,9 +17,12 @@
     <ClInclude Include="Light\PointLight.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Renderer\DataTypes.h" />
+    <ClInclude Include="Renderer\InstancedRenderable.h" />
     <ClInclude Include="Renderer\Renderable.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\Voxel.h" />
     <ClInclude Include="Shader\PixelShader.h" />
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\VertexShader.h" />
@@ -41,8 +44,11 @@
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Light\PointLight.cpp" />
     <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="Renderer\InstancedRenderable.cpp" />
     <ClCompile Include="Renderer\Renderable.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\Voxel.cpp" />
     <ClCompile Include="Shader\PixelShader.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="Shader\VertexShader.cpp" />

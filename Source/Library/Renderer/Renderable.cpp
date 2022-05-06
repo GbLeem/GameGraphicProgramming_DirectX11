@@ -96,7 +96,6 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        //==================================================
          //create constant buffer deals with world matrix
         D3D11_BUFFER_DESC b2 =
         {

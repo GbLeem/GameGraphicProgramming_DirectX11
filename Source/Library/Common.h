@@ -55,9 +55,9 @@ namespace library
 #define ASSIMP_LOAD_FLAGS (aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_ConvertToLeftHanded)
 
     /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
-      Class:    DirectionsInput
+        Struct:   DirectionsInput
 
-      Summary:  Data structure that stores keyboard movement data
+        Summary:  Data structure that stores keyboard movement data
     S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
     struct DirectionsInput
     {
@@ -70,13 +70,38 @@ namespace library
     };
 
     /*S+S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S+++S
-      Class:    MouseRelativeMovement
+        Struct:   MouseRelativeMovement
 
-      Summary:  Data structure that stores mouse relative movement data
+        Summary:  Data structure that stores mouse relative movement data
     S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S---S-S*/
     struct MouseRelativeMovement
     {
         LONG X;
         LONG Y;
+    };
+
+    /*E+E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E+++E
+        Enum:     eBlockType
+
+        Summary:  Enumeration of block types
+    E---E---E---E---E---E---E---E---E---E---E---E---E---E---E---E---E-E*/
+    enum class eBlockType : CHAR
+    {
+        GRASSLAND = 21,
+        SNOW,
+        OCEAN,
+        SAND,
+        SCORCHED,
+        BARE,
+        TUNDRA,
+        TEMPERATE_DESERT,
+        SHRUBLAND,
+        TAIGA,
+        TEMPERATE_DECIDUOUS_FOREST,
+        TEMPERATE_RAIN_FOREST,
+        SUBTROPICAL_DESERT,
+        TROPICAL_SEASONAL_FOREST,
+        TROPICAL_RAIN_FOREST,
+        COUNT,
     };
 }
