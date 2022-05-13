@@ -52,7 +52,10 @@ namespace library
         hr = pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, m_vertexShader.GetAddressOf());
 
         if (FAILED(hr))
+        {
+            MessageBox(nullptr, L"Vertex Shader create Error", L"Error", MB_OK);
             return hr;
+        }
 
         //Define the input layout (add texture/normal coordinates)
         D3D11_INPUT_ELEMENT_DESC aLayouts[] =
@@ -72,8 +75,10 @@ namespace library
         hr = pDevice->CreateInputLayout(aLayouts, uNumElements, pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), m_vertexLayout.GetAddressOf());
 
         if (FAILED(hr))
+        {
+            MessageBox(nullptr, L"input layout Error", L"Error", MB_OK);
             return hr;
-
+        }
         return S_OK;
     }
 

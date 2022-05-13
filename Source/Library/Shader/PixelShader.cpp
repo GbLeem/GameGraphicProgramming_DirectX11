@@ -52,7 +52,10 @@ namespace library
         hr = pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, m_pixelShader.GetAddressOf());
 
         if (FAILED(hr))
+        {
+            MessageBox(nullptr, L"Pixel Shader create Error", L"Error", MB_OK);
             return hr;
+        }
 
         return S_OK;
     }

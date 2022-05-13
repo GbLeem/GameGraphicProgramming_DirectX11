@@ -12,8 +12,8 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     InstancedRenderable::InstancedRenderable(_In_ const XMFLOAT4& outputColor)
         :Renderable(outputColor)
-        , m_instanceBuffer()
-        , m_aInstanceData()
+        , m_instanceBuffer(nullptr)
+        , m_aInstanceData(std::vector<InstanceData>())
         , m_padding()
     {
 
@@ -33,7 +33,7 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     InstancedRenderable::InstancedRenderable(_In_ std::vector<InstanceData>&& aInstanceData, _In_ const XMFLOAT4& outputColor)
         : Renderable(outputColor)
-        , m_instanceBuffer()
+        , m_instanceBuffer(nullptr)
         , m_aInstanceData(aInstanceData)
         , m_padding()
     {
@@ -112,6 +112,9 @@ namespace library
 
         hr = pDevice->CreateBuffer(&instBuffDesc, &instData, m_instanceBuffer.GetAddressOf());
 
-        return hr;
+        if (FAILED(hr))
+            return hr;
+
+        return S_OK;
     }
 }

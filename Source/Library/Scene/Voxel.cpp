@@ -49,9 +49,7 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     HRESULT Voxel::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
     {
-        HRESULT hr = S_OK;
-
-        hr = initialize(pDevice, pImmediateContext);
+        HRESULT hr = initialize(pDevice, pImmediateContext);
         if (FAILED(hr))
             return hr;
 
@@ -59,7 +57,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        return hr;
+        return S_OK;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::Update
@@ -72,7 +70,7 @@ namespace library
     void Voxel::Update(_In_ FLOAT deltaTime)
     {
         //¸ÂÀ½?
-        //UNREFERENCED_PARAMETER(deltaTime);
+        UNREFERENCED_PARAMETER(deltaTime);
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

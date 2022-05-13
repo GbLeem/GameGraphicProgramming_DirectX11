@@ -149,7 +149,7 @@ xcopy /y /d "$(SolutionDir)..\External\Assimp\Binary\x64\Debug\assimp-vc142-mtd.
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)..\Library\x64\Release"
 copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"
-xcopy /y /d "$(SolutionDir)..\External\Assimp\Binary\x64\Release\assimp-vc142-mt.dll" "$(OutDir)" </Command>
+xcopy /y /d "$(SolutionDir)..\External\Assimp\Binary\x64\Release\assimp-vc142-mt.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>d3d11.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>

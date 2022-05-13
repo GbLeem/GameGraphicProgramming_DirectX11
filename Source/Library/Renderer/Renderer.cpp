@@ -132,9 +132,9 @@ namespace library
                 if (SUCCEEDED(hr))
                 {
                     hr = adapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf()));
-                    adapter.Reset();
+                    //adapter.Reset();
                 }
-                dxgiDevice.Reset();
+                //dxgiDevice.Reset();
             }
         }
         if (FAILED(hr))
@@ -169,7 +169,7 @@ namespace library
             {
                 hr = m_swapChain1.As(&m_swapChain);
             }
-            dxgiFactory2.Reset();
+            //dxgiFactory2.Reset();
         }
         else
         {
@@ -194,7 +194,7 @@ namespace library
 
         dxgiFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
 
-        dxgiFactory.Reset();
+        //dxgiFactory.Reset();
 
         if (FAILED(hr))
             return hr;
@@ -204,28 +204,14 @@ namespace library
         hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
 
         if (FAILED(hr))
-        {
             return hr;
-        }
+        
 
         hr = m_d3dDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
-        pBackBuffer.Reset();
+        //pBackBuffer.Reset();
 
         if (FAILED(hr))
-        {
             return hr;
-        }
-
-        // Setup the viewport
-        D3D11_VIEWPORT vp;
-        vp.Width = (FLOAT)width;
-        vp.Height = (FLOAT)height;
-        vp.MinDepth = 0.0f;
-        vp.MaxDepth = 1.0f;
-        vp.TopLeftX = 0;
-        vp.TopLeftY = 0;
-
-        m_immediateContext->RSSetViewports(1, &vp);
 
         //<Depth Stencil>  
 
@@ -272,6 +258,19 @@ namespace library
         //Bind Depth-Stencil Data to the OM stage
         m_immediateContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
+        // Setup the viewport
+        D3D11_VIEWPORT vp =
+        {
+            .TopLeftX = 0,
+            .TopLeftY = 0,
+            .Width = (FLOAT)width,
+            .Height = (FLOAT)height,
+            .MinDepth = 0.0f,
+            .MaxDepth = 1.0f,
+        };
+
+        m_immediateContext->RSSetViewports(1, &vp);
+
         //initialize the projection matrix
         m_projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f);
 
@@ -279,6 +278,11 @@ namespace library
         for (auto Renderableiter : m_renderables)
         {
             Renderableiter.second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
+        }
+        //init Voxel
+        for (auto VoxelShaderiter : m_scenes[m_pszMainSceneName]->GetVoxels())
+        {
+            VoxelShaderiter->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
         }
         for (auto VertexShaderiter : m_vertexShaders)
         {
@@ -288,11 +292,6 @@ namespace library
         {
             PixelShaderiter.second->Initialize(m_d3dDevice.Get());
         }
-        //init Voxel
-        for (auto VoxelShaderiter : m_scenes[m_pszMainSceneName]->GetVoxels())
-        {
-            VoxelShaderiter->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
-        }
 
         //create constant buffer deals with projection matrix
         D3D11_BUFFER_DESC b1 =
@@ -301,8 +300,6 @@ namespace library
             .Usage = D3D11_USAGE_DEFAULT,
             .BindFlags = D3D11_BIND_CONSTANT_BUFFER,
             .CPUAccessFlags = 0,
-            .MiscFlags = 0,
-            .StructureByteStride = 0
         };
 
         hr = m_d3dDevice->CreateBuffer(&b1, nullptr, m_cbChangeOnResize.GetAddressOf());
@@ -310,8 +307,10 @@ namespace library
             return hr;
 
         //create renderer constant buffer and update
-        CBChangeOnResize cb1;
-        cb1.Projection = XMMatrixTranspose(m_projection);
+        CBChangeOnResize cb1 =
+        {
+            .Projection = XMMatrixTranspose(m_projection)
+        };
         m_immediateContext->UpdateSubresource(m_cbChangeOnResize.Get(), 0, nullptr, &cb1, 0, 0);
 
         //initialize camera(create constant buffer - view matrix)
@@ -453,8 +452,11 @@ namespace library
         if (m_scenes.contains(pszSceneName))
             return E_FAIL;
 
-        m_scenes[pszSceneName] = std::make_shared<Scene>(sceneFilePath);
-        return S_OK;
+        else
+        {
+            m_scenes[pszSceneName] = std::make_shared<Scene>(sceneFilePath);
+            return S_OK;
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -616,12 +618,13 @@ namespace library
             UINT offset = 0u;
 
             //set the buffer
-            m_immediateContext->IASetVertexBuffers(0, 1, iter->GetVertexBuffer().GetAddressOf(), &stride, &offset);
-            m_immediateContext->IASetVertexBuffers(1, 1, iter->GetInstanceBuffer().GetAddressOf(), &Istride, &offset);
+            m_immediateContext->IASetVertexBuffers(0u, 1u, iter->GetVertexBuffer().GetAddressOf(), &stride, &offset);
+
+            //set instance buffer
+            m_immediateContext->IASetVertexBuffers(1u, 1u, iter->GetInstanceBuffer().GetAddressOf(), &Istride, &offset);
 
             m_immediateContext->IASetIndexBuffer(iter->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0u);
-            //set instance buffer
-
+            
             //set the input layout
             m_immediateContext->IASetInputLayout(iter->GetVertexLayout().Get());
 

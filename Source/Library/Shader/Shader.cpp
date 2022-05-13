@@ -61,13 +61,16 @@ namespace library
 #endif     
 
         ComPtr<ID3DBlob> pErrorBlob(nullptr);
-        hr = D3DCompileFromFile(GetFileName(), nullptr, nullptr, m_pszEntryPoint, m_pszShaderModel, dwShaderFlags, 0u, ppOutBlob, pErrorBlob.GetAddressOf());
+        hr = D3DCompileFromFile(m_pszFileName, nullptr, nullptr, m_pszEntryPoint, m_pszShaderModel, dwShaderFlags, 0u, ppOutBlob, pErrorBlob.GetAddressOf());
 
         if (FAILED(hr))
             return hr;
 
-        if (pErrorBlob)
+        /*if (pErrorBlob)
+        {
             pErrorBlob.Reset();
+            return hr;
+        }*/
 
         return S_OK;
     }

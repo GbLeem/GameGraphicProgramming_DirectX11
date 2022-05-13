@@ -10,9 +10,8 @@ namespace library
       Modifies: [pDiffuse, pSpecular].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     Material::Material()
-        :pDiffuse()
-        ,pSpecular()
+        :pDiffuse(std::shared_ptr<Texture>())
+        ,pSpecular(std::shared_ptr<Texture>())
     {
-
     }
 }

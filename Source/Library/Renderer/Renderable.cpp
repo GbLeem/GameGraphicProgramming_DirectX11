@@ -20,16 +20,16 @@ namespace library
                  m_world].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     Renderable::Renderable(_In_ const XMFLOAT4& outputColor)
-        :m_vertexBuffer()
-        ,m_indexBuffer()
-        ,m_constantBuffer()
-        ,m_aMeshes()
-        ,m_aMaterials()
-        ,m_vertexShader()
-        ,m_pixelShader()
+        :m_vertexBuffer(nullptr)
+        ,m_indexBuffer(nullptr)
+        ,m_constantBuffer(nullptr)
+        ,m_aMeshes(std::vector<BasicMeshEntry>())
+        ,m_aMaterials(std::vector<Material>())
+        ,m_vertexShader(nullptr)
+        ,m_pixelShader(nullptr)
         ,m_outputColor(outputColor)
-        ,m_padding()
         ,m_world(XMMatrixIdentity())
+        ,m_padding()
     {
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

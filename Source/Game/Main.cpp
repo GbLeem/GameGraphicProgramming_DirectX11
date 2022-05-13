@@ -21,6 +21,7 @@
 #include "Cube/Cube.h"
 #include "Cube/RotatingCube.h"
 #include "Light/RotatingPointLight.h"
+#include "Model/Model.h"
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Function: wWinMain
