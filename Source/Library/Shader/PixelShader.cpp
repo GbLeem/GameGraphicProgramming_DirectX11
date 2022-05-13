@@ -20,7 +20,7 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     PixelShader::PixelShader(_In_ PCWSTR pszFileName, _In_ PCSTR pszEntryPoint, _In_ PCSTR pszShaderModel)
         :Shader(pszFileName, pszEntryPoint, pszShaderModel)
-        ,m_pixelShader()
+        , m_pixelShader(nullptr)
     {
     }
 
@@ -49,10 +49,12 @@ namespace library
         }
 
         //Create the pixel shader
-        hr = pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, GetPixelShader().GetAddressOf());
+        hr = pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, m_pixelShader.GetAddressOf());
 
         if (FAILED(hr))
             return hr;
+
+        return S_OK;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

@@ -92,6 +92,22 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+    //ADD model
+    std::shared_ptr<library::Model> nanosuit = std::make_shared<library::Model>(L"nanosuit/nanosuit.obj");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"NanoSuit", nanosuit)))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"NanoSuit", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"NanoSuit", L"PhongShader")))
+    {
+        return 0;
+    }
+
+
     XMFLOAT4 color;
     XMStoreFloat4(&color, Colors::White);
     std::shared_ptr<library::PointLight> pointLight = std::make_shared<library::PointLight>(

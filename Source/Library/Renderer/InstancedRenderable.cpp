@@ -10,14 +10,11 @@ namespace library
       Args:     const XMFLOAT4& outputColor
                   Default color of the renderable
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: InstancedRenderable::InstancedRenderable definition (remove the comment)
-    --------------------------------------------------------------------*/
     InstancedRenderable::InstancedRenderable(_In_ const XMFLOAT4& outputColor)
         :Renderable(outputColor)
-        ,m_instanceBuffer()
-        ,m_aInstanceData()
-        ,m_padding()
+        , m_instanceBuffer()
+        , m_aInstanceData()
+        , m_padding()
     {
 
     }
@@ -34,9 +31,6 @@ namespace library
 
       Modifies: [m_instanceBuffer, m_aInstanceData].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: InstancedRenderable::InstancedRenderable definition (remove the comment)
-    --------------------------------------------------------------------*/
     InstancedRenderable::InstancedRenderable(_In_ std::vector<InstanceData>&& aInstanceData, _In_ const XMFLOAT4& outputColor)
         : Renderable(outputColor)
         , m_instanceBuffer()
@@ -56,9 +50,6 @@ namespace library
 
       Modifies: [m_aInstanceData].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: InstancedRenderable::SetInstanceData definition (remove the comment)
-    --------------------------------------------------------------------*/
     void InstancedRenderable::SetInstanceData(_In_ std::vector<InstanceData>&& aInstanceData)
     {
         m_aInstanceData = aInstanceData;
@@ -72,9 +63,6 @@ namespace library
       Returns:  ComPtr<ID3D11Buffer>&
                   Instance buffer
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: InstancedRenderable::GetInstanceBuffer definition (remove the comment)
-    --------------------------------------------------------------------*/
     ComPtr<ID3D11Buffer>& InstancedRenderable::GetInstanceBuffer()
     {
         return m_instanceBuffer;
@@ -88,9 +76,6 @@ namespace library
       Returns:  UINT
                   Number of instances
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: InstancedRenderable::GetNumInstances definition (remove the comment)
-    --------------------------------------------------------------------*/
     UINT InstancedRenderable::GetNumInstances() const
     {
         return m_aInstanceData.size();
@@ -109,14 +94,11 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: InstancedRenderable::initializeInstance definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT InstancedRenderable::initializeInstance(_In_ ID3D11Device* pDevice)
     {
         HRESULT hr = S_OK;
 
-        D3D11_BUFFER_DESC bd =
+        D3D11_BUFFER_DESC instBuffDesc =
         {
             .ByteWidth = sizeof(InstanceData) * GetNumInstances(),
             .Usage = D3D11_USAGE_DEFAULT,
@@ -124,12 +106,11 @@ namespace library
             .CPUAccessFlags = 0
         };
 
-        D3D11_SUBRESOURCE_DATA initData =
-        {
-            .pSysMem = m_instanceBuffer.Get()
-        };        
+        D3D11_SUBRESOURCE_DATA instData;
+        ZeroMemory(&instData, sizeof(instData));
+        instData.pSysMem = &m_aInstanceData[0];
 
-        hr = pDevice->CreateBuffer(&bd, &initData, m_instanceBuffer.GetAddressOf());
+        hr = pDevice->CreateBuffer(&instBuffDesc, &instData, m_instanceBuffer.GetAddressOf());
 
         return hr;
     }
