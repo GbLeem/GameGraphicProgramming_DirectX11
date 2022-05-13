@@ -58,7 +58,17 @@ namespace library
     --------------------------------------------------------------------*/
     HRESULT Voxel::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
     {
-        return initialize(pDevice, pImmediateContext);
+        HRESULT hr = S_OK;
+        
+        hr = initialize(pDevice, pImmediateContext);
+        if (FAILED(hr))
+            return hr;
+        
+        hr = initializeInstance(pDevice);
+        if (FAILED(hr))
+            return hr;
+
+        return hr;
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::Update

@@ -116,7 +116,7 @@ namespace library
     {
         HRESULT hr = S_OK;
 
-        D3D11_BUFFER_DESC bd =
+        D3D11_BUFFER_DESC instBuffDesc =
         {
             .ByteWidth = sizeof(InstanceData) * GetNumInstances(),
             .Usage = D3D11_USAGE_DEFAULT,
@@ -124,12 +124,11 @@ namespace library
             .CPUAccessFlags = 0
         };
 
-        D3D11_SUBRESOURCE_DATA initData =
-        {
-            .pSysMem = m_instanceBuffer.Get()
-        };        
+        D3D11_SUBRESOURCE_DATA instData;
+        ZeroMemory(&instData, sizeof(instData));
+        instData.pSysMem = &m_aInstanceData[0];
 
-        hr = pDevice->CreateBuffer(&bd, &initData, m_instanceBuffer.GetAddressOf());
+        hr = pDevice->CreateBuffer(&instBuffDesc, &instData, m_instanceBuffer.GetAddressOf());
 
         return hr;
     }
