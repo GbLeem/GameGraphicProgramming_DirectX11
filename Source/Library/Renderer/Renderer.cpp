@@ -296,10 +296,11 @@ namespace library
         {
             PixelShaderiter.second->Initialize(m_d3dDevice.Get());
         }
-        //init Voxel
-        for (auto VoxelShaderiter : m_scenes[m_pszMainSceneName]->GetVoxels())
+
+        //add
+        for (auto VoxelShaderiter : m_scenes)
         {
-            VoxelShaderiter->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
+            VoxelShaderiter.second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
         }
 
         //=============================================================
@@ -326,6 +327,7 @@ namespace library
         //initialize camera(create constant buffer - view matrix)
         m_camera.Initialize(m_d3dDevice.Get());
         
+        //===============================================================
         //create constant buffer deals with lights
         D3D11_BUFFER_DESC b3 =
         {
@@ -476,9 +478,11 @@ namespace library
     {
         if (m_scenes.contains(pszSceneName))
             return E_FAIL;
-
-        m_scenes[pszSceneName] = std::make_shared<Scene>(sceneFilePath);
-        return S_OK;
+        else
+        {
+            m_scenes[pszSceneName] = m_scenes[sceneFilePath];
+            return S_OK;
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -500,12 +504,12 @@ namespace library
     HRESULT Renderer::SetMainScene(_In_ PCWSTR pszSceneName)
     {
         if (m_scenes.contains(pszSceneName))
+            return E_FAIL;
+        else
         {
             m_pszMainSceneName = pszSceneName;
             return S_OK;
         }
-        else
-            return E_FAIL;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -550,11 +554,6 @@ namespace library
         for (auto Lightiter : m_aPointLights)
         {
             Lightiter->Update(deltaTime);
-        }
-
-        for (auto sceneiter : m_scenes[m_pszMainSceneName]->GetVoxels())
-        {
-            sceneiter->Update(deltaTime);
         }
     }
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -633,59 +632,18 @@ namespace library
             {
                 for (UINT i = 0; i < Renderableiter.second->GetNumMeshes(); ++i)
                 {
-                    UINT j = Renderableiter.second->GetMesh(i).uMaterialIndex;                    
+                    UINT j = Renderableiter.second->GetMesh(i).uMaterialIndex;
+                    //for (UINT j = Renderableiter.second->GetMesh(0).uMaterialIndex; j < Renderableiter.second->GetMesh(i).uMaterialIndex; ++j)
+                    //{   
                     m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetMaterial(j).pDiffuse->GetTextureResourceView().GetAddressOf());
                     m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetMaterial(j).pDiffuse->GetSamplerState().GetAddressOf());
+                    //}
                     m_immediateContext->DrawIndexed(Renderableiter.second->GetMesh(i).uNumIndices, Renderableiter.second->GetMesh(i).uBaseIndex, Renderableiter.second->GetMesh(i).uBaseVertex);
                 }
             }
             else
                 m_immediateContext->DrawIndexed(Renderableiter.second->GetNumIndices(), 0, 0);
         }
-
-        //instance date를 shader로 보내줘야한다. ppt p.18!!!
-        for (auto iter : m_scenes[m_pszMainSceneName]->GetVoxels())
-        {
-            UINT stride = sizeof(SimpleVertex);
-            UINT Istride = sizeof(InstanceData);
-            UINT offset = 0u;
-
-            //set the buffer
-            m_immediateContext->IASetVertexBuffers(0, 1, iter->GetVertexBuffer().GetAddressOf(), &stride, &offset);
-            m_immediateContext->IASetVertexBuffers(1, 1, iter->GetInstanceBuffer().GetAddressOf(), &Istride, &offset);
-
-            m_immediateContext->IASetIndexBuffer(iter->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0u);
-            //set instance buffer
-
-            //set the input layout
-            m_immediateContext->IASetInputLayout(iter->GetVertexLayout().Get());
-
-            //set primitive topology
-            m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-            //update the constant buffer
-            CBChangesEveryFrame cb =
-            {
-                .World = XMMatrixTranspose(iter->GetWorldMatrix()),
-                .OutputColor = iter->GetOutputColor()
-            };
-            m_immediateContext->UpdateSubresource(iter->GetConstantBuffer().Get(), 0u, nullptr, &cb, 0u, 0u);
-
-            //Set the vertex shader and constant buffers
-            m_immediateContext->VSSetShader(iter->GetVertexShader().Get(), nullptr, 0u);
-            m_immediateContext->VSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
-            m_immediateContext->VSSetConstantBuffers(1u, 1u, m_cbChangeOnResize.GetAddressOf());
-            m_immediateContext->VSSetConstantBuffers(2u, 1u, iter->GetConstantBuffer().GetAddressOf());
-
-            // Set the pixel shader and constant buffers
-            m_immediateContext->PSSetShader(iter->GetPixelShader().Get(), nullptr, 0u);
-            m_immediateContext->PSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
-            m_immediateContext->PSSetConstantBuffers(2u, 1u, iter->GetConstantBuffer().GetAddressOf());
-            m_immediateContext->PSSetConstantBuffers(3u, 1u, m_cbLights.GetAddressOf());
-
-            m_immediateContext->DrawIndexedInstanced(iter->GetNumIndices(), iter->GetNumInstances(), 0u, 0u, 0u);
-        }
-
         //Present the information rendered to the back buffer to the front buffer
         m_swapChain->Present(0, 0);
     }
