@@ -111,14 +111,14 @@ PS_INPUT VSVoxel(VS_INPUT input)
 float4 PSVoxel(PS_INPUT input) : SV_TARGET
 {
     //ambient
-    float3 ambient;
+    float3 ambient = float3(0.0f, 0.0f, 0.0f);
     for (uint i = 0; i < NUM_LIGHTS; ++i)
     {
-        ambient += float3(0.2f, 0.2f, 0.2f) * LightColors[i].xyz;
+        ambient += float3(0.1f, 0.1f, 0.1f) * LightColors[i].xyz;
     }
 
     //diffuse shading
-    float3 diffuse;
+    float3 diffuse = float3(0.0f, 0.0f, 0.0f);
     for (uint i = 0; i < NUM_LIGHTS; ++i)
     {
         float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
