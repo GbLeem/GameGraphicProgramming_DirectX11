@@ -105,6 +105,9 @@
     <ClInclude Include="Renderer\InstancedRenderable.h">
       <Filter>Source Files\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Shader\SkinningVertexShader.h">
+      <Filter>Source Files\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="directx.ico">
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="Renderer\InstancedRenderable.cpp">
       <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\SkinningVertexShader.cpp">
+      <Filter>Source Files\Shader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

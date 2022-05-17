@@ -22,9 +22,12 @@
     <FxCompile Include="Shaders\VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\BobLampClean\boblampclean.md5anim" />
+    <None Include="Content\BobLampClean\boblampclean.md5mesh" />
     <None Include="nanosuit\nanosuit.mtl" />
     <None Include="Shaders\PhongShaders.fxh" />
     <None Include="Shaders\Shaders.fxh" />
+    <None Include="Shaders\SkinningShaders.fxh" />
     <None Include="Shaders\VoxelShaders.fxh" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +37,11 @@
     <ClInclude Include="Light\RotatingPointLight.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Content\BobLampClean\guard1_body.jpg" />
+    <Image Include="Content\BobLampClean\guard1_face.jpg" />
+    <Image Include="Content\BobLampClean\guard1_helmet.jpg" />
+    <Image Include="Content\BobLampClean\iron_grill.jpg" />
+    <Image Include="Content\BobLampClean\round_grill.jpg" />
     <Image Include="nanosuit\arm_dif.png" />
     <Image Include="nanosuit\arm_showroom_ddn.png" />
     <Image Include="nanosuit\arm_showroom_refl.png" />

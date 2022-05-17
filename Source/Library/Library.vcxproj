@@ -25,6 +25,7 @@
     <ClInclude Include="Scene\Voxel.h" />
     <ClInclude Include="Shader\PixelShader.h" />
     <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="Shader\SkinningVertexShader.h" />
     <ClInclude Include="Shader\VertexShader.h" />
     <ClInclude Include="Texture\DDSTextureLoader.h" />
     <ClInclude Include="Texture\Material.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="Scene\Voxel.cpp" />
     <ClCompile Include="Shader\PixelShader.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
+    <ClCompile Include="Shader\SkinningVertexShader.cpp" />
     <ClCompile Include="Shader\VertexShader.cpp" />
     <ClCompile Include="Texture\DDSTextureLoader.cpp" />
     <ClCompile Include="Texture\Material.cpp" />

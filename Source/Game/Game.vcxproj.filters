@@ -20,6 +20,12 @@
     <Filter Include="Source Files\nanosuit">
       <UniqueIdentifier>{106a75d1-ae4c-48c4-b15f-55a86f35477d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Content">
+      <UniqueIdentifier>{a10d94e3-714e-4b44-a599-e0f7c7c43f2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Content\BobLampClean">
+      <UniqueIdentifier>{0e00d74e-8293-4aae-bd0b-fcc919c67462}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -57,6 +63,15 @@
       <Filter>Source Files\nanosuit</Filter>
     </None>
     <None Include="Shaders\VoxelShaders.fxh">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Content\BobLampClean\boblampclean.md5anim">
+      <Filter>Source Files\Content\BobLampClean</Filter>
+    </None>
+    <None Include="Content\BobLampClean\boblampclean.md5mesh">
+      <Filter>Source Files\Content\BobLampClean</Filter>
+    </None>
+    <None Include="Shaders\SkinningShaders.fxh">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -176,6 +191,21 @@
     </Image>
     <Image Include="nanosuit\body_showroom_refl.png">
       <Filter>Source Files\nanosuit</Filter>
+    </Image>
+    <Image Include="Content\BobLampClean\round_grill.jpg">
+      <Filter>Source Files\Content\BobLampClean</Filter>
+    </Image>
+    <Image Include="Content\BobLampClean\guard1_body.jpg">
+      <Filter>Source Files\Content\BobLampClean</Filter>
+    </Image>
+    <Image Include="Content\BobLampClean\guard1_face.jpg">
+      <Filter>Source Files\Content\BobLampClean</Filter>
+    </Image>
+    <Image Include="Content\BobLampClean\guard1_helmet.jpg">
+      <Filter>Source Files\Content\BobLampClean</Filter>
+    </Image>
+    <Image Include="Content\BobLampClean\iron_grill.jpg">
+      <Filter>Source Files\Content\BobLampClean</Filter>
     </Image>
   </ItemGroup>
 </Project>
