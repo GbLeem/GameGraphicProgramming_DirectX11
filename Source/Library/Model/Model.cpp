@@ -125,7 +125,7 @@ namespace library
         if (m_pScene)
         {
             //m_globalInverseTransform 을 world에서 model로 보내주는 걸로 만들기
-            //m_globalInverseTransform = 
+            m_globalInverseTransform = ConvertMatrix(m_pScene->mRootNode->mTransformation);
             hr = initFromScene(pDevice, pImmediateContext, m_pScene, m_filePath);
         }
         else
@@ -142,7 +142,7 @@ namespace library
         //m_animationBuffer, m_aAnimationData
         D3D11_BUFFER_DESC animbuffer =
         {
-            .ByteWidth = sizeof(AnimationData) * m_aAnimationData.size(),
+            .ByteWidth = static_cast<UINT>(sizeof(AnimationData) * m_aAnimationData.size()),
             .Usage = D3D11_USAGE_DEFAULT,
             .BindFlags = D3D11_BIND_VERTEX_BUFFER,
             .CPUAccessFlags = 0,
@@ -210,11 +210,15 @@ namespace library
             {
                 readNodeHierarchy(animationTimeTicks, m_pScene->mRootNode, identity);
                 
-                //Resize m_aTransforms same as  m_aBoneInfo
+                //Resize m_aTransforms same as m_aBoneInfo
                 m_aTransforms.resize(m_aBoneInfo.size());
 
                 //Store each final transformations in the bone information to the m_aTransforms
-                m_aTransforms.push_back(m_aBoneInfo[m_aTransforms.size() - 1].FinalTransformation);
+                for (UINT i = 0; i < m_aBoneInfo.size(); ++i)
+                {
+                    m_aTransforms.push_back(m_aBoneInfo[i].FinalTransformation);
+                    //m_aTransforms.push_back(m_aBoneInfo[m_aTransforms.size() - 1].FinalTransformation);
+                }
             }
         }
     }
@@ -538,7 +542,7 @@ namespace library
         hr = initMaterials(pDevice, pImmediateContext, pScene, filePath);
         if(FAILED(hr))
             return hr;
-
+        
         for (UINT i = 0; i < GetNumVertices(); ++i)
         {
             //Create AnimationData for the vertex and add it to m_aAnimationData
@@ -668,7 +672,7 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     void Model::interpolatePosition(_Inout_ XMFLOAT3& outTranslate, _In_ FLOAT animationTimeTicks, _In_ const aiNodeAnim* pNodeAnim)
     {
-        if (pNodeAnim->mNumPositionKeys == 1) //로테이션 키 맞음?
+        if (pNodeAnim->mNumPositionKeys == 1) 
         {
             outTranslate = ConvertVector3dToFloat3(pNodeAnim->mPositionKeys[0].mValue);
             return;
@@ -950,36 +954,49 @@ namespace library
     --------------------------------------------------------------------*/
     void Model::readNodeHierarchy(_In_ FLOAT animationTimeTicks, _In_ const aiNode* pNode, _In_ const XMMATRIX& parentTransform)
     {
-        //m_pScene->mAnimations;
-        //m_pScene->mRootNode;
+        //pNode가 들어왔을때 해당Node(본)의 위치를 알아내기
 
-        
-        
-        aiNodeAnim* pNodeAnim;
-        //findNodeAnimOrNull(m_pScene->mAnimations, pNodeAnim->mNodeName.C_Str());
-        
         XMMATRIX nodeTransform = ConvertMatrix(pNode->mTransformation);
 
-        XMMATRIX scalingMatrix, rotationMatrix, translationMatirx;
-        
+        aiNodeAnim* pNodeAnim = nullptr;
+        for (UINT i = 0; i < m_pScene->mNumAnimations; ++i)
+        {
+            findNodeAnimOrNull(m_pScene->mAnimations[i], pNode->mName.C_Str());
+        }
+  
         if (pNodeAnim)
         {
-            //interpolateScaling(scalingMatrix,animationTimeTicks, pNodeAnim);
-            //interpolateRotation(rotationMatrix, animationTimeTicks, pNodeAnim);
-            //interpolatePosition(translationMatirx, animationTimeTicks, pNodeAnim);
+            XMMATRIX scalingMatrix, rotationMatrix, translationMatrix;
             
-            nodeTransform = scalingMatrix * rotationMatrix * translationMatirx;
+            XMFLOAT3 scale = ConvertVector3dToFloat3(pNodeAnim->mScalingKeys->mValue);
+            interpolateScaling(scale, animationTimeTicks, pNodeAnim);
+            //float3 를 벡터3로 바꾸고 그걸 매트릭스로 바꿀수 있나?
+            //XMStoreFloat3x3(scale, scalingMatrix);
+                
+            XMVECTOR rot = ConvertQuaternionToVector(pNodeAnim->mRotationKeys->mValue);
+            interpolateRotation(rot, animationTimeTicks, pNodeAnim);
+
+            XMFLOAT3 pos = ConvertVector3dToFloat3(pNodeAnim->mPositionKeys->mValue);
+            interpolatePosition(pos, animationTimeTicks, pNodeAnim);
+                           
+            //Replace NodeTransform with final transformation 
+            nodeTransform = scalingMatrix * rotationMatrix * translationMatrix;
         }
 
+        //본 인포에 offsetMatirx랑 FinalTransformation 둘다 가지고 있음
         XMMATRIX globalTransformation = nodeTransform * parentTransform;
+        
         //XMMATRIX finalTransformation = 본 인포->OffsetMatrix * globalTransformation * m_globalInverseTransform;
         
-        if (m_boneNameToIndexMap.contains(pNodeAnim->mNodeName.C_Str()))
+        if (m_boneNameToIndexMap.contains(pNode->mName.C_Str()))
         {
-           //for (UINT i = 0; i < getBoneId(pNode->); ++i)
-           //{
-           //    m_aBoneInfo[i].FinalTransformation;
-           //}
+            //pNode->mParent->mMeshes  
+            //get bone index and retrieve the boneInfo
+            for (UINT i = 0; i < m_aBoneInfo.size(); ++i)
+            {
+                //set the finaltransformation of boneInfo
+                m_aBoneInfo[i].FinalTransformation;
+            }
         }
 
         //For each child of current node,

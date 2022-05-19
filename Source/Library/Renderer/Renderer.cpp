@@ -557,7 +557,7 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderer::Render definition (remove the comment)
     --------------------------------------------------------------------*/
-    void Renderer::Render(_Out_ UINT boneIdex)
+    void Renderer::Render()
     {
         //clear the back buffer
         m_immediateContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::MidnightBlue);
@@ -687,7 +687,7 @@ namespace library
             UINT aStrides[2] = { static_cast<UINT>(sizeof(SimpleVertex)), static_cast<UINT>(sizeof(AnimationData)) };
             UINT aOffsets[2] = { 0u, 0u };
             m_immediateContext->IASetVertexBuffers(0, 1, Modeliter.second->GetVertexBuffer().GetAddressOf(), &aStrides[0], &aOffsets[0]);
-            m_immediateContext->IASetVertexBuffers(0, 1, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &aStrides[1], &aOffsets[1]);
+            m_immediateContext->IASetVertexBuffers(1, 1, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &aStrides[1], &aOffsets[1]);
             
             //set index buffer
             m_immediateContext->IASetIndexBuffer(Modeliter.second->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0);
@@ -711,21 +711,19 @@ namespace library
             for (UINT i = 0; i < MAX_NUM_BONES; ++i)
             {
                 //맞나?
-                cb4.BoneTransforms[i] = (Modeliter.second->GetBoneTransforms())[i];
+                cb4.BoneTransforms[i] = (Modeliter.second->GetBoneTransforms()[i]);
             }
             m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0, nullptr, &cb4, 0, 0);
 
             //set shader
             m_immediateContext->VSSetShader(Modeliter.second->GetVertexShader().Get(), nullptr, 0);
-
             //set constant buffer
             m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2, 1, Modeliter.second->GetConstantBuffer().GetAddressOf());
-
-            //Texture resource view of the renderable must be set into the pixel shader
+            
+            //set ps constant buffer
             m_immediateContext->PSSetShader(Modeliter.second->GetPixelShader().Get(), nullptr, 0);
-
             m_immediateContext->PSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->PSSetConstantBuffers(2, 1, Modeliter.second->GetConstantBuffer().GetAddressOf());
             m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
