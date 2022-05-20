@@ -959,6 +959,7 @@ namespace library
         XMMATRIX nodeTransform = ConvertMatrix(pNode->mTransformation);
 
         aiNodeAnim* pNodeAnim = nullptr;
+        //find current aiNodeAnim
         for (UINT i = 0; i < m_pScene->mNumAnimations; ++i)
         {
             findNodeAnimOrNull(m_pScene->mAnimations[i], pNode->mName.C_Str());
@@ -967,18 +968,19 @@ namespace library
         if (pNodeAnim)
         {
             XMMATRIX scalingMatrix, rotationMatrix, translationMatrix;
-            
+
             XMFLOAT3 scale = ConvertVector3dToFloat3(pNodeAnim->mScalingKeys->mValue);
             interpolateScaling(scale, animationTimeTicks, pNodeAnim);
-            //float3 를 벡터3로 바꾸고 그걸 매트릭스로 바꿀수 있나?
-            //XMStoreFloat3x3(scale, scalingMatrix);
+            scalingMatrix = XMMatrixTranslation(scale.x, scale.y, scale.z);
                 
             XMVECTOR rot = ConvertQuaternionToVector(pNodeAnim->mRotationKeys->mValue);
             interpolateRotation(rot, animationTimeTicks, pNodeAnim);
-
+            rotationMatrix = XMMatrixTranslationFromVector(rot);
+            
             XMFLOAT3 pos = ConvertVector3dToFloat3(pNodeAnim->mPositionKeys->mValue);
             interpolatePosition(pos, animationTimeTicks, pNodeAnim);
-                           
+            translationMatrix = XMMatrixTranslation(pos.x, pos.y, pos.z);
+
             //Replace NodeTransform with final transformation 
             nodeTransform = scalingMatrix * rotationMatrix * translationMatrix;
         }
