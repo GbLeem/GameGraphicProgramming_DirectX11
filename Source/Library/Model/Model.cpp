@@ -92,7 +92,7 @@ namespace library
         , m_aBoneInfo()
         , m_aTransforms()
         , m_pScene()
-        , m_timeSinceLoaded(0)
+        , m_timeSinceLoaded()
         , m_globalInverseTransform()
     {
 
@@ -121,21 +121,21 @@ namespace library
     {
         HRESULT hr = S_OK;        
         m_pScene = sm_pImporter->ReadFile(m_filePath.string().c_str(), ASSIMP_LOAD_FLAGS);
-
+        
         if (m_pScene)
         {
             //m_globalInverseTransform 을 world에서 model로 보내주는 걸로 만들기
             m_globalInverseTransform = ConvertMatrix(m_pScene->mRootNode->mTransformation);
-            hr = initFromScene(pDevice, pImmediateContext, m_pScene, m_filePath);
+            initFromScene(pDevice, pImmediateContext, m_pScene, m_filePath);
         }
         else
         {
-            hr = E_FAIL;
             OutputDebugString(L"Error parsing ");
             OutputDebugString(m_filePath.c_str());
             OutputDebugString(L": ");
             OutputDebugStringA(sm_pImporter->GetErrorString());
             OutputDebugString(L"\n");
+            return E_FAIL;
         }
 
         //create vertex buffer
@@ -319,7 +319,16 @@ namespace library
     --------------------------------------------------------------------*/
     void Model::countVerticesAndIndices(_Inout_ UINT& uOutNumVertices, _Inout_ UINT& uOutNumIndices, _In_ const aiScene* pScene)
     {
-        //뭐해야함
+        for (UINT i = 0u; i < pScene->mNumMeshes; ++i)
+        {
+            m_aMeshes[i].uMaterialIndex = pScene->mMeshes[i]->mMaterialIndex;
+            m_aMeshes[i].uNumIndices = pScene->mMeshes[i]->mNumFaces * 3u;
+            m_aMeshes[i].uBaseVertex = uOutNumVertices;
+            m_aMeshes[i].uBaseIndex = uOutNumIndices;
+
+            uOutNumVertices += pScene->mMeshes[i]->mNumVertices;
+            uOutNumIndices += m_aMeshes[i].uNumIndices;
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -537,18 +546,26 @@ namespace library
     HRESULT Model::initFromScene(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext, _In_ const aiScene* pScene, _In_ const std::filesystem::path& filePath)
     {
         HRESULT hr = S_OK;
+        m_aMeshes.resize(pScene->mNumMeshes);
+        m_aMaterials.resize(pScene->mNumMaterials);
 
         //initializing materials
         hr = initMaterials(pDevice, pImmediateContext, pScene, filePath);
         if(FAILED(hr))
             return hr;
         
-        for (UINT i = 0; i < GetNumVertices(); ++i)
+        for (UINT i = 0; i < pScene->mNumMeshes; ++i)
         {
-            //Create AnimationData for the vertex and add it to m_aAnimationData
-            //The elements of AnimationData come from m_aBoneData
-            m_aAnimationData[i].aBoneIndices = static_cast<XMUINT4>(m_aBoneData[i].aBoneIds);
-            m_aAnimationData[i].aBoneWeights = static_cast<XMFLOAT4>(m_aBoneData[i].aWeights);
+            UINT vertice = pScene->mMeshes[i]->mNumVertices;
+
+            for(UINT j = 0; j < vertice; ++j)
+            {
+                //오류 발생 구간
+                //Create AnimationData for the vertex and add it to m_aAnimationData
+                //The elements of AnimationData come from m_aBoneData
+                m_aAnimationData[j].aBoneIndices = static_cast<XMUINT4>(m_aBoneData[j].aBoneIds);
+                m_aAnimationData[j].aBoneWeights = static_cast<XMFLOAT4>(m_aBoneData[j].aWeights);
+            }
         }
         return S_OK;
     }
@@ -606,6 +623,7 @@ namespace library
     --------------------------------------------------------------------*/
     void Model::initMeshBones(_In_ UINT uMeshIndex, _In_ const aiMesh* pMesh)
     {
+        //이건 맞음
         for (UINT i = 0; i < pMesh->mNumBones; ++i)
         {
             initMeshSingleBone(uMeshIndex, pMesh->mBones[i]);
@@ -653,9 +671,12 @@ namespace library
     void Model::initSingleMesh(_In_ UINT uMeshIndex, _In_ const aiMesh* pMesh)
     {
         //After populating the vertex attribute, 
+        if (pMesh->HasBones())
+        {
+            //call initMeshBones
+            initMeshBones(uMeshIndex, pMesh);
+        }
         
-        //call initMeshBones
-        initMeshBones(uMeshIndex, pMesh);
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -992,13 +1013,11 @@ namespace library
         
         if (m_boneNameToIndexMap.contains(pNode->mName.C_Str()))
         {
-            //pNode->mParent->mMeshes  
             //get bone index and retrieve the boneInfo
-            for (UINT i = 0; i < m_aBoneInfo.size(); ++i)
-            {
-                //set the finaltransformation of boneInfo
-                m_aBoneInfo[i].FinalTransformation;
-            }
+            UINT boneIdx = m_boneNameToIndexMap[pNode->mName.C_Str()];
+            
+            //set the finaltransformation of boneInfo
+            m_aBoneInfo[boneIdx].FinalTransformation = globalTransformation * m_aBoneInfo[boneIdx].OffsetMatrix;
         }
 
         //For each child of current node,

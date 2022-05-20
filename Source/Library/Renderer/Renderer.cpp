@@ -292,6 +292,11 @@ namespace library
         {
             VoxelShaderiter->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
         }
+        //Initialize the models
+        for (auto Modeliter : m_models)
+        {
+            Modeliter.second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
+        }
         for (auto VertexShaderiter : m_vertexShaders)
         {
             VertexShaderiter.second->Initialize(m_d3dDevice.Get());
@@ -299,11 +304,6 @@ namespace library
         for (auto PixelShaderiter : m_pixelShaders)
         {
             PixelShaderiter.second->Initialize(m_d3dDevice.Get());
-        }
-        //Initialize the models
-        for (auto Modeliter : m_models)
-        {
-            Modeliter.second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
         }
 
         //create constant buffer deals with projection matrix

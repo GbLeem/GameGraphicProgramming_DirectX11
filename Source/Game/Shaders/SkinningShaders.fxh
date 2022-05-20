@@ -135,7 +135,6 @@ PS_PHONG_INPUT VSPhong(VS_INPUT input)
 	//output.Position = mul(output.Position, Projection);
 	
 	//output.TexCoord = input.TexCoord;
-	//output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
 	//output.WorldPosition = mul(input.Position, World);
 
 	matrix skinTransform = (matrix)0;
@@ -148,6 +147,9 @@ PS_PHONG_INPUT VSPhong(VS_INPUT input)
 	output.Position = mul(output.Position, World);
 	output.Position = mul(output.Position, View);
 	output.Position = mul(output.Position, Projection);
+	
+	output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
+	output.Normal = normalize(mul(float4(input.Normal, 0), skinTransform).xyz);
 	
 	return output;
 }
