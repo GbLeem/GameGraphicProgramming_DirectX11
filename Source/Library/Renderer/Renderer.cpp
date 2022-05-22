@@ -140,9 +140,7 @@ namespace library
                 if (SUCCEEDED(hr))
                 {
                     hr = adapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf()));
-                    //adapter.Reset();
                 }
-                //dxgiDevice.Reset();
             }
         }
         if (FAILED(hr))
@@ -177,7 +175,6 @@ namespace library
             {
                 hr = m_swapChain1.As(&m_swapChain);
             }
-            //dxgiFactory2.Reset();
         }
         else
         {
@@ -202,12 +199,9 @@ namespace library
 
         dxgiFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
 
-        //dxgiFactory.Reset();
-
         if (FAILED(hr))
             return hr;
 
-        // Create a render target view
         ComPtr< ID3D11Texture2D> pBackBuffer(nullptr);
         hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
 
@@ -216,7 +210,6 @@ namespace library
 
 
         hr = m_d3dDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
-        //pBackBuffer.Reset();
 
         if (FAILED(hr))
             return hr;
@@ -387,8 +380,14 @@ namespace library
     --------------------------------------------------------------------*/
     HRESULT Renderer::AddModel(_In_ PCWSTR pszModelName, _In_ const std::shared_ptr<Model>& pModel)
     {
-        m_models[pszModelName] = pModel;
-        return S_OK;
+        if (m_models.contains(pszModelName))
+            return E_FAIL;
+
+        else
+        {
+            m_models[pszModelName] = pModel;
+            return S_OK;
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -531,6 +530,11 @@ namespace library
             Renderableiter.second->Update(deltaTime);
         }
 
+        for (auto modeliter : m_models)
+        {
+            modeliter.second->Update(deltaTime);
+        }
+
         m_camera.Update(deltaTime);
 
         for (auto Lightiter : m_aPointLights)
@@ -543,10 +547,6 @@ namespace library
             sceneiter->Update(deltaTime);
         }
 
-        for (auto modeliter : m_models)
-        {
-            modeliter.second->Update(deltaTime);
-        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -572,15 +572,14 @@ namespace library
         m_immediateContext->UpdateSubresource(m_camera.GetConstantBuffer().Get(), 0, nullptr, &cb0, 0, 0);
 
         //create light constant buffer
-        CBLights cb3;
+        CBLights cb3 = {};
         for (UINT i = 0; i < NUM_LIGHTS; ++i)
         {
             cb3.LightColors[i] = m_aPointLights[i]->GetColor();
             cb3.LightPositions[i] = m_aPointLights[i]->GetPosition();
         }
-
         m_immediateContext->UpdateSubresource(m_cbLights.Get(), 0, nullptr, &cb3, 0, 0);
-      
+
         for (auto Renderableiter : m_renderables)
         {
             //set vertex buffer
@@ -613,6 +612,8 @@ namespace library
             m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
+
+            
 
             //Texture resource view of the renderable must be set into the pixel shader
             m_immediateContext->PSSetShader(Renderableiter.second->GetPixelShader().Get(), nullptr, 0);
@@ -684,11 +685,12 @@ namespace library
         for (auto Modeliter : m_models)
         {
             //set vertex buffer
-            UINT aStrides[2] = { static_cast<UINT>(sizeof(SimpleVertex)), static_cast<UINT>(sizeof(AnimationData)) };
-            UINT aOffsets[2] = { 0u, 0u };
-            m_immediateContext->IASetVertexBuffers(0, 1, Modeliter.second->GetVertexBuffer().GetAddressOf(), &aStrides[0], &aOffsets[0]);
-            m_immediateContext->IASetVertexBuffers(1, 1, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &aStrides[1], &aOffsets[1]);
-            
+            UINT stride = sizeof(SimpleVertex);
+            UINT Astride = sizeof(AnimationData);
+            UINT aOffsets = 0u;
+            m_immediateContext->IASetVertexBuffers(0u, 1u, Modeliter.second->GetVertexBuffer().GetAddressOf(), &stride, &aOffsets);
+            m_immediateContext->IASetVertexBuffers(1u, 1u, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &Astride, &aOffsets);
+
             //set index buffer
             m_immediateContext->IASetIndexBuffer(Modeliter.second->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0);
 
@@ -704,29 +706,30 @@ namespace library
                 .World = XMMatrixTranspose(Modeliter.second->GetWorldMatrix()),
                 .OutputColor = Modeliter.second->GetOutputColor()
             };
-            m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0, nullptr, &cb2, 0, 0);
+            m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0u, nullptr, &cb2, 0u, 0u);
 
             //constant buffer CBSkinning
-            CBSkinning cb4;
-            for (UINT i = 0; i < MAX_NUM_BONES; ++i)
+            CBSkinning cb4 = {};
+            for (UINT i = 0u; i < Modeliter.second->GetBoneTransforms().size(); ++i)
             {
-                //맞나?
-                cb4.BoneTransforms[i] = (Modeliter.second->GetBoneTransforms()[i]);
+                cb4.BoneTransforms[i] = XMMatrixTranspose(Modeliter.second->GetBoneTransforms()[i]);
             }
-            m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0, nullptr, &cb4, 0, 0);
+
+            m_immediateContext->UpdateSubresource(Modeliter.second->GetSkinningConstantBuffer().Get(), 0u, nullptr, &cb4, 0u, 0u);
 
             //set shader
-            m_immediateContext->VSSetShader(Modeliter.second->GetVertexShader().Get(), nullptr, 0);
+            m_immediateContext->VSSetShader(Modeliter.second->GetVertexShader().Get(), nullptr, 0u);
             //set constant buffer
-            m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
-            m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
-            m_immediateContext->VSSetConstantBuffers(2, 1, Modeliter.second->GetConstantBuffer().GetAddressOf());
-            
+            m_immediateContext->VSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(1u, 1u, m_cbChangeOnResize.GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(2u, 1u, Modeliter.second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(4u, 1u, Modeliter.second->GetSkinningConstantBuffer().GetAddressOf());
+
             //set ps constant buffer
             m_immediateContext->PSSetShader(Modeliter.second->GetPixelShader().Get(), nullptr, 0);
-            m_immediateContext->PSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
-            m_immediateContext->PSSetConstantBuffers(2, 1, Modeliter.second->GetConstantBuffer().GetAddressOf());
-            m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(2u, 1u, Modeliter.second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(3u, 1u, m_cbLights.GetAddressOf());
 
             //<set shader resource and samplers>
             if (Modeliter.second->HasTexture())
@@ -823,7 +826,7 @@ namespace library
                 return S_OK;
             }
         }
-        return E_FAIL;
+        return E_FAIL; 
     }
 
 
@@ -857,6 +860,7 @@ namespace library
         }
         return E_FAIL;
     }
+
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::SetVertexShaderOfScene
@@ -922,5 +926,4 @@ namespace library
     {
         return m_driverType;
     }
-
 }

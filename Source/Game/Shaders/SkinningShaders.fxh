@@ -129,15 +129,8 @@ struct PS_PHONG_INPUT
 PS_PHONG_INPUT VSPhong(VS_INPUT input)
 {
 	PS_PHONG_INPUT output = (PS_PHONG_INPUT) 0;
-	
-	//output.Position = mul(input.Position, World);
-	//output.Position = mul(output.Position, View);
-	//output.Position = mul(output.Position, Projection);
-	
-	//output.TexCoord = input.TexCoord;
-	//output.WorldPosition = mul(input.Position, World);
-
 	matrix skinTransform = (matrix)0;
+	
 	skinTransform += BoneTransforms[input.BoneIndices.x] * input.BoneWeights.x;
 	skinTransform += BoneTransforms[input.BoneIndices.y] * input.BoneWeights.y;
 	skinTransform += BoneTransforms[input.BoneIndices.z] * input.BoneWeights.z;
@@ -148,9 +141,11 @@ PS_PHONG_INPUT VSPhong(VS_INPUT input)
 	output.Position = mul(output.Position, View);
 	output.Position = mul(output.Position, Projection);
 	
-	output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
-	output.Normal = normalize(mul(float4(input.Normal, 0), skinTransform).xyz);
+	output.TexCoord = input.TexCoord;
 	
+	output.Normal = normalize(mul(float4(input.Normal, 0), skinTransform).xyz);
+	output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
+
 	return output;
 }
 
@@ -167,7 +162,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 
 	for (uint i = 0; i < NUM_LIGHTS; ++i)
 	{
-		ambient += float3(0.2f, 0.2f, 0.2f) * LightColors[i].xyz * txDiffuse.Sample(samLinear, input.TexCoord);
+		ambient += float3(0.2f, 0.2f, 0.2f) * LightColors[i].xyz;
 	}
 
    //diffuse shading
@@ -175,19 +170,19 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 	for (uint i = 0; i < NUM_LIGHTS; ++i)
 	{
 		float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
-		diffuse += saturate(dot(input.Normal, lightDirection)) * LightColors[i].xyz * txDiffuse.Sample(samLinear, input.TexCoord);
+		diffuse += saturate(dot(input.Normal, lightDirection)) * LightColors[i].xyz;
 	}
 
    //specular shading
 	float3 viewDirection = normalize(CameraPosition.xyz - input.WorldPosition);
-	float3 specular;
+	float3 specular = float3(0.f, 0.f, 0.f);
 
 	for (uint i = 0; i < NUM_LIGHTS; ++i)
 	{
 		float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
 		float3 reflectDirection = reflect(-lightDirection, input.Normal);
-		specular += pow(saturate(dot(viewDirection, reflectDirection)), 20.0f) * LightColors[i].xyz * txDiffuse.Sample(samLinear, input.TexCoord);
+		specular += pow(saturate(dot(viewDirection, reflectDirection)), 20.0f) * LightColors[i].xyz;
 	}
 
-	return float4(ambient + diffuse + specular, 1.0f);
+	return float4(ambient + diffuse + specular, 1.0f) * txDiffuse.Sample(samLinear, input.TexCoord);
 }
