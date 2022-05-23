@@ -9,9 +9,6 @@
 // Global Variables
 //--------------------------------------------------------------------------------------
 static const unsigned int MAX_NUM_BONES = 256u;
-/*--------------------------------------------------------------------
-  TODO: Declare a diffuse texture and a sampler state (remove the comment)
---------------------------------------------------------------------*/
 Texture2D txDiffuse : register(t0);
 SamplerState samLinear : register(s0);
 
@@ -23,9 +20,6 @@ SamplerState samLinear : register(s0);
 
   Summary:  Constant buffer used for view transformation
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: cbChangeOnCameraMovement definition (remove the comment)
---------------------------------------------------------------------*/
 cbuffer cbChangeOnCameraMovement : register(b0)
 {
     matrix View;
@@ -37,9 +31,6 @@ cbuffer cbChangeOnCameraMovement : register(b0)
 
   Summary:  Constant buffer used for projection transformation
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: cbChangeOnResize definition (remove the comment)
---------------------------------------------------------------------*/
 cbuffer cbChangeOnResize : register(b1)
 {
     matrix Projection;
@@ -50,9 +41,6 @@ cbuffer cbChangeOnResize : register(b1)
 
   Summary:  Constant buffer used for world transformation
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: cbChangesEveryFrame definition (remove the comment)
---------------------------------------------------------------------*/
 cbuffer cbChangesEveryFrame : register(b2)
 {
     matrix World;
@@ -64,9 +52,6 @@ cbuffer cbChangesEveryFrame : register(b2)
 
   Summary:  Constant buffer used for shading
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: cbLights definition (remove the comment)
---------------------------------------------------------------------*/
 cbuffer cbLights : register(b3)
 {
     float4 LightPositions[NUM_LIGHTS];
@@ -78,9 +63,6 @@ cbuffer cbLights : register(b3)
 
   Summary:  Constant buffer used for skinning
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: cbLights definition (remove the comment)
---------------------------------------------------------------------*/
 cbuffer cbSkinning : register(b4)
 {
     matrix BoneTransforms[MAX_NUM_BONES];
@@ -92,9 +74,6 @@ cbuffer cbSkinning : register(b4)
 
   Summary:  Used as the input to the vertex shader
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: VS_INPUT definition (remove the comment)
---------------------------------------------------------------------*/
 struct VS_INPUT
 {
 	float4 Position : POSITION;
@@ -109,9 +88,6 @@ struct VS_INPUT
   Summary:  Used as the input to the pixel shader, output of the 
             vertex shader
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: PS_PHONG_INPUT definition (remove the comment)
---------------------------------------------------------------------*/
 struct PS_PHONG_INPUT
 {
 	float4 Position : SV_POSITION;
@@ -123,9 +99,6 @@ struct PS_PHONG_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-/*--------------------------------------------------------------------
-  TODO: Vertex Shader function VSPhong definition (remove the comment)
---------------------------------------------------------------------*/
 PS_PHONG_INPUT VSPhong(VS_INPUT input)
 {
 	PS_PHONG_INPUT output = (PS_PHONG_INPUT) 0;
@@ -152,9 +125,6 @@ PS_PHONG_INPUT VSPhong(VS_INPUT input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-/*--------------------------------------------------------------------
-  TODO: Pixel Shader function PSPhong definition (remove the comment)
---------------------------------------------------------------------*/
 float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 {
    //ambient

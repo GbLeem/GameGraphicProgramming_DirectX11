@@ -122,7 +122,7 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
     for (uint i = 0; i < NUM_LIGHTS; ++i)
     {
         float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
-        diffuse += saturate(dot(input.Normal, -lightDirection)) * LightColors[i].xyz;
+        diffuse += saturate(dot(input.Normal, lightDirection)) * LightColors[i].xyz;
     }
     
     return float4(ambient + diffuse, 1.0f) * OutputColor;

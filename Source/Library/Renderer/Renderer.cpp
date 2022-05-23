@@ -15,9 +15,6 @@ namespace library
                  m_projection, m_renderables, m_vertexShaders,
                  m_pixelShaders].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Renderer definition (remove the comment)
-    --------------------------------------------------------------------*/
     Renderer::Renderer()
         : m_driverType(D3D_DRIVER_TYPE_HARDWARE)
         , m_featureLevel(D3D_FEATURE_LEVEL_11_1)
@@ -57,9 +54,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Initialize definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Renderer::Initialize(_In_ HWND hWnd)
     {
         HRESULT hr = S_OK;
@@ -375,9 +369,6 @@ namespace library
       Returns:  HRESULT
                   Status code.
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::AddModel definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Renderer::AddModel(_In_ PCWSTR pszModelName, _In_ const std::shared_ptr<Model>& pModel)
     {
         if (m_models.contains(pszModelName))
@@ -520,9 +511,6 @@ namespace library
       Args:     FLOAT deltaTime
                   Time difference of a frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Update definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderer::Update(_In_ FLOAT deltaTime)
     {
         for (auto Renderableiter : m_renderables)
@@ -554,9 +542,6 @@ namespace library
 
       Summary:  Render the frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::Render definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Renderer::Render()
     {
         //clear the back buffer
@@ -612,8 +597,6 @@ namespace library
             m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
-
-            
 
             //Texture resource view of the renderable must be set into the pixel shader
             m_immediateContext->PSSetShader(Renderableiter.second->GetPixelShader().Get(), nullptr, 0);
@@ -708,7 +691,7 @@ namespace library
             };
             m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0u, nullptr, &cb2, 0u, 0u);
 
-            //constant buffer CBSkinning
+            //Additional constant buffer CBSkinning
             CBSkinning cb4 = {};
             for (UINT i = 0u; i < Modeliter.second->GetBoneTransforms().size(); ++i)
             {
@@ -717,9 +700,8 @@ namespace library
 
             m_immediateContext->UpdateSubresource(Modeliter.second->GetSkinningConstantBuffer().Get(), 0u, nullptr, &cb4, 0u, 0u);
 
-            //set shader
+            //set shader & set constant buffer
             m_immediateContext->VSSetShader(Modeliter.second->GetVertexShader().Get(), nullptr, 0u);
-            //set constant buffer
             m_immediateContext->VSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1u, 1u, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2u, 1u, Modeliter.second->GetConstantBuffer().GetAddressOf());
@@ -813,9 +795,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::SetVertexShaderOfModel definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Renderer::SetVertexShaderOfModel(_In_ PCWSTR pszModelName, _In_ PCWSTR pszVertexShaderName)
     {
         if (m_models.contains(pszModelName))
@@ -828,7 +807,6 @@ namespace library
         }
         return E_FAIL; 
     }
-
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::SetPixelShaderOfModel
@@ -845,9 +823,6 @@ namespace library
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Renderer::SetPixelShaderOfModel definition (remove the comment)
-    --------------------------------------------------------------------*/
     HRESULT Renderer::SetPixelShaderOfModel(_In_ PCWSTR pszModelName, _In_ PCWSTR pszPixelShaderName)
     {
         if (m_models.contains(pszModelName))
@@ -860,7 +835,6 @@ namespace library
         }
         return E_FAIL;
     }
-
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::SetVertexShaderOfScene

@@ -196,15 +196,15 @@ PS_BlinnPhong_INPUT VSBlinnPhong (VS_BlinnPhong_INPUT input)
 float4 PSBlinnPhong(PS_BlinnPhong_INPUT input) : SV_TARGET
 {
    //ambient
-   float3 ambient = float3(0.2f, 0.2f, 0.2f) * txDiffuse.Sample(samLinear, input.TexCoord);
+	float3 ambient = float3(0.2f, 0.2f, 0.2f);
 
    //diffuse
    float3 diffuse;
    for (uint i = 0; i < NUM_LIGHTS; ++i)
    {
         float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
-        diffuse += saturate(dot(input.Normal, lightDirection)) * LightColors[i].xyz * txDiffuse.Sample(samLinear, input.TexCoord);
-   }
+		diffuse += saturate(dot(input.Normal, lightDirection)) * LightColors[i].xyz;
+	}
 
    //specular
    float3 specular;
@@ -216,10 +216,10 @@ float4 PSBlinnPhong(PS_BlinnPhong_INPUT input) : SV_TARGET
         float3 lightDirection = normalize(LightPositions[i].xyz - input.WorldPosition);
 
         h = normalize(lightDirection + viewDirection);
-        specular += min(pow(saturate(dot(h, input.Normal)), 80.0f), 1.0f) * LightColors[i].xyz* txDiffuse.Sample(samLinear, input.TexCoord);
-   }
+		specular += min(pow(saturate(dot(h, input.Normal)), 80.0f), 1.0f) * LightColors[i].xyz;
+	}
    
-   return float4(ambient + diffuse + specular ,1.0f);
+	return float4(ambient + diffuse + specular, 1.0f) * txDiffuse.Sample(samLinear, input.TexCoord);
 }
 
 
