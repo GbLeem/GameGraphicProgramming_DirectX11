@@ -1,17 +1,53 @@
-#include "Texture/Material.h"
+#include "Material.h"
 
 namespace library
 {
-    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
-      Method:   Material::Material
+	Material::Material(_In_ std::wstring szName)
+		: m_padding{ '\0', }
+		, pDiffuse()
+		, pSpecularExponent()
+		, pNormal()
+		, m_szName(szName)
+	{
+	}
 
-      Summary:  Constructor
+	HRESULT Material::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
+	{
+		HRESULT hr = S_OK;
 
-      Modifies: [pDiffuse, pSpecular].
-    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    Material::Material()
-        :pDiffuse(std::shared_ptr<Texture>())
-        ,pSpecular(std::shared_ptr<Texture>())
-    {
-    }
+		if (pDiffuse)
+		{
+			hr = pDiffuse->Initialize(pDevice, pImmediateContext);
+			if (FAILED(hr))
+			{
+				return hr;
+			}
+		}
+
+		if (pSpecularExponent)
+		{
+			hr = pSpecularExponent->Initialize(pDevice, pImmediateContext);
+			if (FAILED(hr))
+			{
+				return hr;
+			}
+		}
+
+		if (pNormal)
+		{
+			hr = pNormal->Initialize(pDevice, pImmediateContext);
+			if (FAILED(hr))
+			{
+				return hr;
+			}
+		}
+
+		return hr;
+	}
+
+	std::wstring Material::GetName() const
+	{
+		return m_szName;
+	}
+
 }

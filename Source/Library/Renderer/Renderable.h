@@ -7,7 +7,7 @@
 
   Classes: Renderable
 
-  © 2022 Kyung Hee University
+  ?2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
 
@@ -20,6 +20,7 @@
 
 namespace library
 {
+
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
       Class:    Renderable
 
@@ -51,8 +52,10 @@ namespace library
     C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
     class Renderable
     {
+    public:
+        static constexpr const UINT INVALID_MATERIAL = (0xFFFFFFFF);
+
     protected:
-#define INVALID_MATERIAL (0xFFFFFFFF)
         struct BasicMeshEntry
         {
             BasicMeshEntry()
@@ -83,17 +86,21 @@ namespace library
         void SetVertexShader(_In_ const std::shared_ptr<VertexShader>& vertexShader);
         void SetPixelShader(_In_ const std::shared_ptr<PixelShader>& pixelShader);
 
+        void AddMaterial(_In_ const std::shared_ptr<Material>& material);
+        HRESULT SetMaterialOfMesh(_In_ const UINT uMeshIndex, _In_ const UINT uMaterialIndex);
+
         ComPtr<ID3D11VertexShader>& GetVertexShader();
         ComPtr<ID3D11PixelShader>& GetPixelShader();
         ComPtr<ID3D11InputLayout>& GetVertexLayout();
         ComPtr<ID3D11Buffer>& GetVertexBuffer();
         ComPtr<ID3D11Buffer>& GetIndexBuffer();
         ComPtr<ID3D11Buffer>& GetConstantBuffer();
+        ComPtr<ID3D11Buffer>& GetNormalBuffer();
 
         const XMMATRIX& GetWorldMatrix() const;
         const XMFLOAT4& GetOutputColor() const;
         BOOL HasTexture() const;
-        const Material& GetMaterial(UINT uIndex) const;
+        const std::shared_ptr<Material>& GetMaterial(UINT uIndex) const;
         const BasicMeshEntry& GetMesh(UINT uIndex) const;
 
         void RotateX(_In_ FLOAT angle);
@@ -108,21 +115,28 @@ namespace library
 
         UINT GetNumMeshes() const;
         UINT GetNumMaterials() const;
+        BOOL HasNormalMap() const;
+
     protected:
         const virtual SimpleVertex* getVertices() const = 0;
         virtual const WORD* getIndices() const = 0;
-        HRESULT initialize(
+        virtual HRESULT initialize(
             _In_ ID3D11Device* pDevice,
             _In_ ID3D11DeviceContext* pImmediateContext
-            );
+        );
+
+        void calculateNormalMapVectors();
+        void calculateTangentBitangent(_In_ const SimpleVertex& v1, _In_ const SimpleVertex& v2, _In_ const SimpleVertex& v3, _Out_ XMFLOAT3& tangent, _Out_ XMFLOAT3& bitangent);
 
     protected:
         ComPtr<ID3D11Buffer> m_vertexBuffer;
         ComPtr<ID3D11Buffer> m_indexBuffer;
         ComPtr<ID3D11Buffer> m_constantBuffer;
+        ComPtr<ID3D11Buffer> m_normalBuffer;
 
         std::vector<BasicMeshEntry> m_aMeshes;
-        std::vector<Material> m_aMaterials;
+        std::vector<std::shared_ptr<Material>> m_aMaterials;
+        std::vector<NormalData> m_aNormalData;
 
         std::shared_ptr<VertexShader> m_vertexShader;
         std::shared_ptr<PixelShader> m_pixelShader;
@@ -130,5 +144,6 @@ namespace library
         XMFLOAT4 m_outputColor;
         BYTE m_padding[8];
         XMMATRIX m_world;
+        BOOL m_bHasNormalMap;
     };
 }
