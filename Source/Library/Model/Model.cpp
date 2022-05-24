@@ -99,7 +99,8 @@ namespace library
     HRESULT Model::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
     {
         HRESULT hr = S_OK;
-        m_pScene = sm_pImporter->ReadFile(m_filePath.string().c_str(), ASSIMP_LOAD_FLAGS);
+        m_pScene = sm_pImporter->ReadFile(m_filePath.string().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals | 
+        aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
 
         if (m_pScene)
         {

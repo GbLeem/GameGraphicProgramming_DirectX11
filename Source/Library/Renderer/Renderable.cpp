@@ -92,7 +92,7 @@ namespace library
             return hr;
 
         //renderable has texture and m_NormalMap is empty
-        if (HasTexture() && m_aNormalData.empty())
+        if (HasTexture() && !m_bHasNormalMap)
         {
             calculateNormalMapVectors();
 
@@ -101,21 +101,21 @@ namespace library
             //Create normal buffer vertex buffer
             D3D11_BUFFER_DESC bd =
             {
-                .ByteWidth = static_cast<UINT>(sizeof(NormalData)),// * m_aNormalData.size()),
+                .ByteWidth = static_cast<UINT>(sizeof(NormalData) * m_aNormalData.size()),
                 .Usage = D3D11_USAGE_DEFAULT,
                 .BindFlags = D3D11_BIND_VERTEX_BUFFER,
                 .CPUAccessFlags = 0,
                 .MiscFlags = 0,
                 .StructureByteStride = 0
             };
-            /*D3D11_SUBRESOURCE_DATA initData =
+            D3D11_SUBRESOURCE_DATA initData =
             {
-                .pSysMem = &m_aNormalData[0],
+                .pSysMem = m_aNormalData.data(),
                 .SysMemPitch = 0,
                 .SysMemSlicePitch = 0
-            };*/
+            };
 
-            hr = pDevice->CreateBuffer(&bd, /*&initData*/nullptr, m_normalBuffer.GetAddressOf());
+            hr = pDevice->CreateBuffer(&bd, &initData, m_normalBuffer.GetAddressOf());
 
             if (FAILED(hr))
                 return hr;
@@ -398,7 +398,7 @@ namespace library
     --------------------------------------------------------------------*/
     void Renderable::calculateNormalMapVectors()
     {
-        UINT uNumFaces = GetNumIndices() / 3;
+        UINT uNumFaces = GetNumIndices() / 3u;
         const SimpleVertex* aVertices = getVertices();
         const WORD* aIndices = getIndices();
 

@@ -493,7 +493,6 @@ namespace library
             m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2, 1, Renderableiter.second->GetConstantBuffer().GetAddressOf());
-            m_immediateContext->VSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
 
             //set pixel shader
             m_immediateContext->PSSetShader(Renderableiter.second->GetPixelShader().Get(), nullptr, 0);
@@ -532,7 +531,7 @@ namespace library
             //set instance buffer
             m_immediateContext->IASetVertexBuffers(1u, 1u, iter->GetInstanceBuffer().GetAddressOf(), &Istride, &offset);
 
-            m_immediateContext->IASetVertexBuffers(2, 1, iter->GetNormalBuffer().GetAddressOf(), &Nstride, &offset);
+            m_immediateContext->IASetVertexBuffers(2u, 1u, iter->GetNormalBuffer().GetAddressOf(), &Nstride, &offset);
 
             m_immediateContext->IASetIndexBuffer(iter->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0u);
 
@@ -556,7 +555,6 @@ namespace library
             m_immediateContext->VSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1u, 1u, m_cbChangeOnResize.GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(2u, 1u, iter->GetConstantBuffer().GetAddressOf());
-            m_immediateContext->VSSetConstantBuffers(3u, 1u, m_cbLights.GetAddressOf());
 
             // Set the pixel shader and constant buffers
             m_immediateContext->PSSetShader(iter->GetPixelShader().Get(), nullptr, 0u);
@@ -580,6 +578,71 @@ namespace library
             else                
                 m_immediateContext->DrawIndexedInstanced(iter->GetNumIndices(), iter->GetNumInstances(), 0u, 0u, 0u);
         }
+
+        for (auto Modeliter : m_scenes[m_pszMainSceneName]->GetModels())
+        {
+            //set vertex buffer
+            UINT stride = sizeof(SimpleVertex);
+            UINT Astride = sizeof(AnimationData);
+            UINT aOffsets = 0u;
+            m_immediateContext->IASetVertexBuffers(0u, 1u, Modeliter.second->GetVertexBuffer().GetAddressOf(), &stride, &aOffsets);
+            m_immediateContext->IASetVertexBuffers(1u, 1u, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &Astride, &aOffsets);
+
+            //set index buffer
+            m_immediateContext->IASetIndexBuffer(Modeliter.second->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0);
+
+            //set input layout
+            m_immediateContext->IASetInputLayout(Modeliter.second->GetVertexLayout().Get());
+
+            //set primitive topology
+            m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            //create renderable constant buffer and update
+            CBChangesEveryFrame cb2 =
+            {
+                .World = XMMatrixTranspose(Modeliter.second->GetWorldMatrix()),
+                .OutputColor = Modeliter.second->GetOutputColor()
+            };
+            m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0u, nullptr, &cb2, 0u, 0u);
+
+            //Additional constant buffer CBSkinning
+            CBSkinning cb4 = {};
+            for (UINT i = 0u; i < Modeliter.second->GetBoneTransforms().size(); ++i)
+            {
+                cb4.BoneTransforms[i] = XMMatrixTranspose(Modeliter.second->GetBoneTransforms()[i]);
+            }
+
+            m_immediateContext->UpdateSubresource(Modeliter.second->GetSkinningConstantBuffer().Get(), 0u, nullptr, &cb4, 0u, 0u);
+
+            //set shader & set constant buffer
+            m_immediateContext->VSSetShader(Modeliter.second->GetVertexShader().Get(), nullptr, 0u);
+            m_immediateContext->VSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(1u, 1u, m_cbChangeOnResize.GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(2u, 1u, Modeliter.second->GetConstantBuffer().GetAddressOf());
+
+            //set ps constant buffer
+            m_immediateContext->PSSetShader(Modeliter.second->GetPixelShader().Get(), nullptr, 0);
+            m_immediateContext->PSSetConstantBuffers(0u, 1u, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(2u, 1u, Modeliter.second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(3u, 1u, m_cbLights.GetAddressOf());
+
+            //<set shader resource and samplers>
+            if (Modeliter.second->HasTexture())
+            {
+                for (UINT i = 0; i < Modeliter.second->GetNumMeshes(); ++i)
+                {
+                    UINT index = Modeliter.second->GetMesh(i).uMaterialIndex;
+                    m_immediateContext->PSSetShaderResources(0, 1, Modeliter.second->GetMaterial(index)->pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetShaderResources(1, 1, Modeliter.second->GetMaterial(index)->pNormal->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0, 1, Modeliter.second->GetMaterial(index)->pDiffuse->GetSamplerState().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(1, 1, Modeliter.second->GetMaterial(index)->pNormal->GetSamplerState().GetAddressOf());
+                    m_immediateContext->DrawIndexed(Modeliter.second->GetMesh(i).uNumIndices, Modeliter.second->GetMesh(i).uBaseIndex, Modeliter.second->GetMesh(i).uBaseVertex);
+                }
+            }
+            else
+                m_immediateContext->DrawIndexed(Modeliter.second->GetNumIndices(), 0, 0);
+        }
+
 
         //Present the information rendered to the back buffer to the front buffer
         m_swapChain->Present(0, 0);
