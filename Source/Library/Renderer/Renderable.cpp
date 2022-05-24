@@ -408,7 +408,7 @@ namespace library
 
         for (UINT i = 0u; i < uNumFaces; ++i)
         {
-            calculateTangentBitangent(aVertices[aIndices[i * 3]], aVertices[aIndices[i * 3]],
+            calculateTangentBitangent(aVertices[aIndices[i * 3]], aVertices[aIndices[i * 3 + 1]],
                 aVertices[aIndices[i * 3 + 2]], tangent, bitangent);
 
             m_aNormalData[aIndices[i * 3]].Tangent = tangent;
@@ -529,7 +529,7 @@ namespace library
         }
 
         m_aMeshes[uMeshIndex].uMaterialIndex = uMaterialIndex;
-
+         
         if (m_aMaterials[uMeshIndex]->pNormal)
         {
             m_bHasNormalMap = true;

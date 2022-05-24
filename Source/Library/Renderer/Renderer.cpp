@@ -506,10 +506,12 @@ namespace library
             {
                 for (UINT i = 0; i < Renderableiter.second->GetNumMeshes(); ++i)
                 {
-                    m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetMaterial(i)->pDiffuse->GetTextureResourceView().GetAddressOf());
-                    m_immediateContext->PSSetShaderResources(1, 1, Renderableiter.second->GetMaterial(i)->pNormal->GetTextureResourceView().GetAddressOf());
-                    m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetMaterial(i)->pDiffuse->GetSamplerState().GetAddressOf());
-                    m_immediateContext->PSSetSamplers(1, 1, Renderableiter.second->GetMaterial(i)->pNormal->GetSamplerState().GetAddressOf());
+                    UINT index = Renderableiter.second->GetMesh(i).uMaterialIndex;
+
+                    m_immediateContext->PSSetShaderResources(0, 1, Renderableiter.second->GetMaterial(index)->pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetShaderResources(1, 1, Renderableiter.second->GetMaterial(index)->pNormal->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0, 1, Renderableiter.second->GetMaterial(index)->pDiffuse->GetSamplerState().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(1, 1, Renderableiter.second->GetMaterial(index)->pNormal->GetSamplerState().GetAddressOf());
                     m_immediateContext->DrawIndexed(Renderableiter.second->GetMesh(i).uNumIndices, Renderableiter.second->GetMesh(i).uBaseIndex, Renderableiter.second->GetMesh(i).uBaseVertex);
                 }
             }
@@ -567,10 +569,11 @@ namespace library
             {
                 for (UINT i = 0; i < iter->GetNumMeshes(); ++i)
                 {
-                    m_immediateContext->PSSetShaderResources(0, 1, iter->GetMaterial(i)->pDiffuse->GetTextureResourceView().GetAddressOf());
-                    m_immediateContext->PSSetShaderResources(1, 1, iter->GetMaterial(i)->pNormal->GetTextureResourceView().GetAddressOf());
-                    m_immediateContext->PSSetSamplers(0, 1, iter->GetMaterial(i)->pDiffuse->GetSamplerState().GetAddressOf());
-                    m_immediateContext->PSSetSamplers(1, 1, iter->GetMaterial(i)->pNormal->GetSamplerState().GetAddressOf());
+                    UINT index = iter->GetMesh(i).uMaterialIndex;
+                    m_immediateContext->PSSetShaderResources(0u, 1u, iter->GetMaterial(index)->pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetShaderResources(1u, 1u, iter->GetMaterial(index)->pNormal->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0u, 1u, iter->GetMaterial(index)->pDiffuse->GetSamplerState().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(1u, 1u, iter->GetMaterial(index)->pNormal->GetSamplerState().GetAddressOf());
                     m_immediateContext->DrawIndexed(iter->GetMesh(i).uNumIndices, iter->GetMesh(i).uBaseIndex, iter->GetMesh(i).uBaseVertex);
                 }
             }
