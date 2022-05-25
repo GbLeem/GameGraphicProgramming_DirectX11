@@ -25,7 +25,7 @@ cbuffer cbChangeOnCameraMovement : register(b0)
 {
 	matrix View;
 	float4 CameraPosition;
-}
+};
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangeOnResize
   Summary:  Constant buffer used for projection transformation
@@ -33,7 +33,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangeOnResize : register(b1)
 {
 	matrix Projection;
-}
+};
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangesEveryFrame
 
@@ -57,7 +57,7 @@ cbuffer cbLights : register(b3)
 {
 	float4 LightPositions[NUM_LIGHTS];
 	float4 LightColors[NUM_LIGHTS];
-}
+};
 
 //--------------------------------------------------------------------------------------
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -107,7 +107,7 @@ PS_INPUT VSVoxel(VS_INPUT input)
 {
 	PS_INPUT output = (PS_INPUT) 0;
 	output.Position = mul(input.Position, input.mTransform);
-	output.Position = mul(input.Position, World);
+	output.Position = mul(output.Position, World);
 	output.Position = mul(output.Position, View);
 	output.Position = mul(output.Position, Projection);
 	
@@ -144,7 +144,7 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 
 		//calculate the normal from the data in normal map
-		float bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * /*input.Normal*/normal);
+		float3 bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * normal);
 
 		//normalize the resulting bump normal and replace existing normal
 		normal = normalize(bumpNormal);
@@ -163,7 +163,7 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
 	for (uint j = 0; j < NUM_LIGHTS; ++j)
 	{
 		float3 lightDirection = normalize(LightPositions[j].xyz - input.WorldPosition);
-		diffuse += saturate(dot(/*input.Normal*/normal, lightDirection)) * LightColors[j].xyz;
+		diffuse += saturate(dot(normal, lightDirection)) * LightColors[j].xyz;
 	}
 
 	return float4(ambient + diffuse, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);

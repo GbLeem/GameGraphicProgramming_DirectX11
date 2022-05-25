@@ -573,8 +573,7 @@ namespace library
                     m_immediateContext->PSSetShaderResources(1u, 1u, iter->GetMaterial(index)->pNormal->GetTextureResourceView().GetAddressOf());
                     m_immediateContext->PSSetSamplers(0u, 1u, iter->GetMaterial(index)->pDiffuse->GetSamplerState().GetAddressOf());
                     m_immediateContext->PSSetSamplers(1u, 1u, iter->GetMaterial(index)->pNormal->GetSamplerState().GetAddressOf());
-                    m_immediateContext->DrawIndexed(iter->GetMesh(i).uNumIndices, iter->GetMesh(i).uBaseIndex, iter->GetMesh(i).uBaseVertex);
-                    //m_immediateContext->DrawIndexedInstanced(iter->GetNumIndices(), iter->GetNumInstances(), 0u, 0u, 0u);
+                    m_immediateContext->DrawIndexedInstanced(iter->GetNumIndices(), iter->GetNumInstances(), 0u, 0u, 0u);
                 }
             }
             else                

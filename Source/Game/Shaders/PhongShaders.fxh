@@ -77,7 +77,6 @@ struct VS_PHONG_INPUT
 	float3 Normal : NORMAL;
 	float3 Tangent : TANGENT;
 	float3 Bitangent : BITANGENT;
-	row_major matrix mTransform : INSTANCE_TRANSFORM;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -144,7 +143,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 
 		//calculate the normal from the data in normal map
-		float bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * normal);
+		float3 bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * normal);
 
 		//normalize the resulting bump normal and replace existing normal
 		normal = normalize(bumpNormal);
