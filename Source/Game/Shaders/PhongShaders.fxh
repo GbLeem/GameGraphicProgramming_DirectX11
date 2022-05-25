@@ -144,7 +144,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 
 		//calculate the normal from the data in normal map
-		float bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * input.Normal);
+		float bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * normal);
 
 		//normalize the resulting bump normal and replace existing normal
 		normal = normalize(bumpNormal);
@@ -163,7 +163,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 	for (uint j = 0; j < NUM_LIGHTS; ++j)
 	{
 		float3 lightDirection = normalize(LightPositions[j].xyz - input.WorldPosition);
-		diffuse += saturate(dot(/*input.Normal*/normal, lightDirection)) * LightColors[j].xyz;
+		diffuse += saturate(dot(normal, lightDirection)) * LightColors[j].xyz;
 	}
 
    //specular shading
@@ -173,7 +173,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 	for (uint k = 0; k < NUM_LIGHTS; ++k)
 	{
 		float3 lightDirection = normalize(LightPositions[k].xyz - input.WorldPosition);
-		float3 reflectDirection = reflect(-lightDirection, /*input.Normal*/normal);
+		float3 reflectDirection = reflect(-lightDirection, normal);
 		specular += pow(saturate(dot(viewDirection, reflectDirection)), 20.0f) * LightColors[k].xyz;
 	}
 

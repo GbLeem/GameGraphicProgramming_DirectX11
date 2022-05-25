@@ -522,16 +522,17 @@ namespace library
         for (auto iter : m_scenes[m_pszMainSceneName]->GetVoxels())
         {
             UINT stride = sizeof(SimpleVertex);
-            UINT Istride = sizeof(InstanceData);
             UINT Nstride = sizeof(NormalData);
+            UINT Istride = sizeof(InstanceData);
             UINT offset = 0u;
 
             //set the buffer
             m_immediateContext->IASetVertexBuffers(0u, 1u, iter-> GetVertexBuffer().GetAddressOf(), &stride, &offset);
             //set instance buffer
-            m_immediateContext->IASetVertexBuffers(1u, 1u, iter->GetInstanceBuffer().GetAddressOf(), &Istride, &offset);
+            m_immediateContext->IASetVertexBuffers(1u, 1u, iter->GetNormalBuffer().GetAddressOf(), &Nstride, &offset);
 
-            m_immediateContext->IASetVertexBuffers(2u, 1u, iter->GetNormalBuffer().GetAddressOf(), &Nstride, &offset);
+            m_immediateContext->IASetVertexBuffers(2u, 1u, iter->GetInstanceBuffer().GetAddressOf(), &Istride, &offset);
+
 
             m_immediateContext->IASetIndexBuffer(iter->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0u);
 
@@ -573,6 +574,7 @@ namespace library
                     m_immediateContext->PSSetSamplers(0u, 1u, iter->GetMaterial(index)->pDiffuse->GetSamplerState().GetAddressOf());
                     m_immediateContext->PSSetSamplers(1u, 1u, iter->GetMaterial(index)->pNormal->GetSamplerState().GetAddressOf());
                     m_immediateContext->DrawIndexed(iter->GetMesh(i).uNumIndices, iter->GetMesh(i).uBaseIndex, iter->GetMesh(i).uBaseVertex);
+                    //m_immediateContext->DrawIndexedInstanced(iter->GetNumIndices(), iter->GetNumInstances(), 0u, 0u, 0u);
                 }
             }
             else                

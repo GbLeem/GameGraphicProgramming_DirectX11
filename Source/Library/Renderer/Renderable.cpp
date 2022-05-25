@@ -38,7 +38,7 @@ namespace library
         , m_outputColor(outputColor)
         , m_world(XMMatrixIdentity())
         , m_padding()
-        , m_bHasNormalMap()
+        , m_bHasNormalMap(FALSE)
     {
 
     }
@@ -92,7 +92,7 @@ namespace library
             return hr;
 
         //renderable has texture and m_NormalMap is empty
-        if (HasTexture() && !m_bHasNormalMap)
+        if (HasTexture() && m_aNormalData.empty())
         {
             calculateNormalMapVectors();
 
@@ -572,9 +572,10 @@ namespace library
     --------------------------------------------------------------------*/
     const std::shared_ptr<Material>& Renderable::GetMaterial(UINT uIndex) const
     {
+        assert(uIndex < m_aMaterials.size());
+
         return m_aMaterials[uIndex];
     }
-
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::HasNormalMap

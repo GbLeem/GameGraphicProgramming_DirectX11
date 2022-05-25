@@ -110,6 +110,7 @@ PS_INPUT VSVoxel(VS_INPUT input)
 	output.Position = mul(input.Position, World);
 	output.Position = mul(output.Position, View);
 	output.Position = mul(output.Position, Projection);
+	
 	output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
 	
 	if (HasNormalMap)
@@ -119,7 +120,7 @@ PS_INPUT VSVoxel(VS_INPUT input)
 	}
 	
 	output.TexCoord = input.TexCoord;
-	//output.WorldPosition = mul(input.Position, World);
+	output.WorldPosition = mul(input.Position, World);
 
 	return output;
 }
@@ -143,7 +144,7 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 
 		//calculate the normal from the data in normal map
-		float bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * input.Normal);
+		float bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * /*input.Normal*/normal);
 
 		//normalize the resulting bump normal and replace existing normal
 		normal = normalize(bumpNormal);
