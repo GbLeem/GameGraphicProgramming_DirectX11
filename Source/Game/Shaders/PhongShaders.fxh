@@ -177,4 +177,5 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_TARGET
 	}
 
 	return float4(ambient + diffuse + specular, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
+	//return float4((normal + 1.0f) / 2.0f, 1.0f);
 }

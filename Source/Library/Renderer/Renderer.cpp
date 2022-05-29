@@ -584,10 +584,13 @@ namespace library
         {
             //set vertex buffer
             UINT stride = sizeof(SimpleVertex);
+            UINT Nstride = sizeof(NormalData);
             UINT Astride = sizeof(AnimationData);
             UINT aOffsets = 0u;
+
             m_immediateContext->IASetVertexBuffers(0u, 1u, Modeliter.second->GetVertexBuffer().GetAddressOf(), &stride, &aOffsets);
-            m_immediateContext->IASetVertexBuffers(1u, 1u, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &Astride, &aOffsets);
+            m_immediateContext->IASetVertexBuffers(1u, 1u, Modeliter.second->GetNormalBuffer().GetAddressOf(), &Nstride, &aOffsets);
+            m_immediateContext->IASetVertexBuffers(2u, 1u, Modeliter.second->GetAnimationBuffer().GetAddressOf(), &Astride, &aOffsets);
 
             //set index buffer
             m_immediateContext->IASetIndexBuffer(Modeliter.second->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0);
@@ -602,7 +605,8 @@ namespace library
             CBChangesEveryFrame cb2 =
             {
                 .World = XMMatrixTranspose(Modeliter.second->GetWorldMatrix()),
-                .OutputColor = Modeliter.second->GetOutputColor()
+                .OutputColor = Modeliter.second->GetOutputColor(),
+                .HasNormalMap = Modeliter.second->HasNormalMap()
             };
             m_immediateContext->UpdateSubresource(Modeliter.second->GetConstantBuffer().Get(), 0u, nullptr, &cb2, 0u, 0u);
 
@@ -643,7 +647,6 @@ namespace library
             else
                 m_immediateContext->DrawIndexed(Modeliter.second->GetNumIndices(), 0, 0);
         }
-
 
         //Present the information rendered to the back buffer to the front buffer
         m_swapChain->Present(0, 0);
