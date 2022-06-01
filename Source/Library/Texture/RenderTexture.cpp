@@ -101,6 +101,7 @@ namespace library
 			.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP,
 			.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP,
 			.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP,
+			.ComparisonFunc = D3D11_COMPARISON_ALWAYS,
 			.MinLOD = 0,
 			.MaxLOD = D3D11_FLOAT32_MAX
 		};

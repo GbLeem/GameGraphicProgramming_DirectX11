@@ -20,7 +20,7 @@ namespace library
 		,m_color(color)
 		,m_eye()
 		,m_at()
-		,m_up()
+		,m_up(DEFAULT_UP)
 		,m_view()
 		,m_projection()
 	{

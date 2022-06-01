@@ -12,10 +12,6 @@
 #define NEAR_PLANE (0.01f)
 #define FAR_PLANE (1000.0f)
 
-//Texture2D diffuseTexture : register(t0);
-//Texture2D normalTexture : register(t1);
-//SamplerState diffuseSampler : register(s0);
-//SamplerState normalSampler : register(s1);
 Texture2D aTextures[2] : register(t0);
 SamplerState aSamplers[2] : register(s0);
 

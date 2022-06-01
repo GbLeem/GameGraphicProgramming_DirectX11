@@ -606,9 +606,6 @@ namespace library
                 const aiMesh* pMesh
                   Point to an assimp mesh object
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Model::initSingleMesh definition (remove the comment)
-    --------------------------------------------------------------------*/
     void Model::initSingleMesh(_In_ UINT uMeshIndex, _In_ const aiMesh* pMesh)
     {
         const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
