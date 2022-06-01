@@ -26,6 +26,7 @@
             ~RotatingPointLight
               Destructor.
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
+
 class RotatingPointLight final : public library::PointLight
 {
 public:

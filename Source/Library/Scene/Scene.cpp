@@ -28,7 +28,7 @@ namespace library
         , m_voxels()
         , m_renderables()
         , m_models()
-        , m_aPointLights{ nullptr, nullptr }
+        , m_aPointLights{ nullptr/*, nullptr*/}
         , m_vertexShaders()
         , m_pixelShaders()
         , m_materials()

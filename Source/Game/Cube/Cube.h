@@ -7,7 +7,7 @@
 
   Classes: Cube
 
-  © 2022 Kyung Hee University
+  ?2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
 
@@ -15,22 +15,9 @@
 
 #include "Cube/BaseCube.h"
 
-/*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-  Class:    Cube
-
-  Summary:  A renderable 3d cube object
-
-  Methods:  Update
-              Overriden function that updates the cube every frame
-            Cube
-              Constructor.
-            ~Cube
-              Destructor.
-C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class Cube : public BaseCube
 {
 public:
-    //Cube(_In_ const std::filesystem::path& textureFilePath);
     Cube(_In_ const XMFLOAT4& outputColor);
     Cube(const Cube& other) = delete;
     Cube(Cube&& other) = delete;
@@ -38,5 +25,7 @@ public:
     Cube& operator=(Cube&& other) = delete;
     ~Cube() = default;
 
+    virtual HRESULT Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext) override;
     virtual void Update(_In_ FLOAT deltaTime) override;
 };
+

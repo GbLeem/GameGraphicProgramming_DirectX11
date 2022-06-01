@@ -21,8 +21,9 @@
 #include "Scene/Scene.h"
 #include "Scene/Voxel.h"
 #include "Cube/Cube.h"
+#include "Cube/RotatingCube.h"
 #include "Shader/SkinningVertexShader.h"
-
+#include "Shader/ShadowVertexShader.h"
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Function: wWinMain
 
@@ -46,20 +47,16 @@
 -----------------------------------------------------------------F-F*/
 INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ INT nCmdShow)
 {
-#ifdef _DEBUG
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    std::unique_ptr<library::Game> game = std::make_unique<library::Game>(L"Game Graphics Programming Lab 9: Normal Mapping");
+    std::unique_ptr<library::Game> game = std::make_unique<library::Game>(L"Game Graphics Programming Lab 10: Shadow Mapping");
 
     std::ofstream sceneFile;
     sceneFile.open("HeightMap.txt");
-    constexpr const UINT MAP_WIDTH = 256u;
-    constexpr const UINT MAP_HEIGHT = 32u;
-    constexpr const UINT MAP_DEPTH = 256u;
+    constexpr const UINT MAP_WIDTH = 0u;
+    constexpr const UINT MAP_HEIGHT = 0u;
+    constexpr const UINT MAP_DEPTH = 0u; 
     XMFLOAT4 aColors[] =
     {
         XMFLOAT4(0.0f,      0.666f, 0.0f,   1.0f),  // GRASSLAND
@@ -225,9 +222,21 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
+    // Light Cube
+    std::shared_ptr<library::VertexShader> lightVertexShader = std::make_shared<library::VertexShader>(L"Shaders/PhongShaders.fxh", "VSLightCube", "vs_5_0");
+    if (FAILED(mainScene->AddVertexShader(L"LightShader", lightVertexShader)))
+    {
+        return 0;
+    }
     // Voxel
     std::shared_ptr<library::VertexShader> voxelVertexShader = std::make_shared<library::VertexShader>(L"Shaders/VoxelShaders.fxh", "VSVoxel", "vs_5_0");
     if (FAILED(mainScene->AddVertexShader(L"VoxelShader", voxelVertexShader)))
+    {
+        return 0;
+    }
+    // Shadow
+    std::shared_ptr<library::ShadowVertexShader> shadowMapVertexShader = std::make_shared<library::ShadowVertexShader>(L"Shaders/ShadowShaders.fxh", "VSShadow", "vs_5_0");
+    if (FAILED(mainScene->AddVertexShader(L"ShadowMapShader", shadowMapVertexShader)))
     {
         return 0;
     }
@@ -244,35 +253,21 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
+    // Light Cube
+    std::shared_ptr<library::PixelShader> lightPixelShader = std::make_shared<library::PixelShader>(L"Shaders/PhongShaders.fxh", "PSLightCube", "ps_5_0");
+    if (FAILED(mainScene->AddPixelShader(L"LightShader", lightPixelShader)))
+    {
+        return 0;
+    }
     // Voxel
     std::shared_ptr<library::PixelShader> voxelPixelShader = std::make_shared<library::PixelShader>(L"Shaders/VoxelShaders.fxh", "PSVoxel", "ps_5_0");
     if (FAILED(mainScene->AddPixelShader(L"VoxelShader", voxelPixelShader)))
     {
         return 0;
     }
-
-    // Load Material
-    std::shared_ptr<library::Model> cyborg = std::make_shared<library::Model>(L"Content/cyborg/cyborg.obj");
-    cyborg->Translate(XMVectorSet(0.0f, 5.0f, 5.0f, 0.0f));
-    if (FAILED(mainScene->AddModel(L"Cyborg", cyborg)))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetVertexShaderOfModel(L"Cyborg", L"PhongShader")))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetPixelShaderOfModel(L"Cyborg", L"PhongShader")))
-    {
-        return 0;
-    }
-
-
-    std::shared_ptr<library::Material> voxelMaterial = std::make_shared<library::Material>(L"VoxelMaterial");
-    voxelMaterial->pDiffuse = std::make_shared<library::Texture>("Content/Cube/diffuse.png");
-    voxelMaterial->pNormal = std::make_shared<library::Texture>("Content/Cube/normal.png");
-
-    if (FAILED(mainScene->AddMaterial(voxelMaterial)))
+    // Shadow
+    std::shared_ptr<library::PixelShader> shadowMapPixelShader = std::make_shared<library::PixelShader>(L"Shaders/ShadowShaders.fxh", "PSShadow", "ps_5_0");
+    if (FAILED(mainScene->AddPixelShader(L"ShadowMapShader", shadowMapPixelShader)))
     {
         return 0;
     }
@@ -287,33 +282,127 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+    game->GetRenderer()->SetShadowMapShaders(shadowMapVertexShader, shadowMapPixelShader);
+
+    std::shared_ptr<library::Model> nanosuit = std::make_shared<library::Model>(L"Content/Nanosuit/nanosuit.obj");
+
+    if (FAILED(mainScene->AddModel(L"Nanosuit", nanosuit)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfModel(L"Nanosuit", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfModel(L"Nanosuit", L"PhongShader")))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::Material> voxelMaterial = std::make_shared<library::Material>(L"VoxelMaterial");
+    voxelMaterial->pDiffuse = std::make_shared<library::Texture>("Content/Cube/diffuse.png");
+    voxelMaterial->pNormal = std::make_shared<library::Texture>("Content/Cube/normal.png");
+    if (FAILED(mainScene->AddMaterial(voxelMaterial)))
+    {
+        return 0;
+    }
+
     if (FAILED(mainScene->SetMaterialOfVoxel(L"VoxelMaterial")))
     {
         return 0;
     }
 
     XMFLOAT4 color;
-    XMStoreFloat4(&color, Colors::White);
-
-    std::shared_ptr<library::PointLight> directionalLight = std::make_shared<library::PointLight>(
-        XMFLOAT4(-5.77f, 5.77f, -5.77f, 1.0f),
-        color
-        );
-    if (FAILED(mainScene->AddPointLight(0, directionalLight)))
-    {
-        return 0;
-    }
 
     XMStoreFloat4(&color, Colors::White);
     std::shared_ptr<RotatingPointLight> rotatingDirectionalLight = std::make_shared<RotatingPointLight>(
-        XMFLOAT4(0.0f, 0.0f, -5.0f, 1.0f),
+        XMFLOAT4(0.0f, 30.0f, -50.0f, 1.0f),
         color
         );
 
-    if (FAILED(mainScene->AddPointLight(1, rotatingDirectionalLight)))
+    if (FAILED(mainScene->AddPointLight(0, rotatingDirectionalLight)))
     {
         return 0;
     }
+
+    std::shared_ptr<RotatingCube> lightCube = std::make_shared<RotatingCube>(color);
+    lightCube->Translate(XMVectorSet(0.0f, 30.0f, -50.0f, 1.0f));
+
+    if (FAILED(mainScene->AddRenderable(L"LightCube", lightCube)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"LightCube", L"LightShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"LightCube", L"LightShader")))
+    {
+        return 0;
+    }
+
+    XMStoreFloat4(&color, Colors::White);
+    std::shared_ptr<Cube> floorCube = std::make_shared<Cube>(color);
+    floorCube->Translate(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+    floorCube->Scale(80.0f, 0.1f, 80.0f);
+
+    if (FAILED(mainScene->AddRenderable(L"FloorCube", floorCube)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"FloorCube", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"FloorCube", L"PhongShader")))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<library::Material> floorMaterial = std::make_shared<library::Material>(L"FloorMat");
+    floorMaterial->pDiffuse = std::make_shared<library::Texture>("Content/plane.jpg");
+    if (FAILED(mainScene->AddMaterial(floorMaterial)))
+    {
+        return 0;
+    }
+
+    floorCube->AddMaterial(floorMaterial);
+
+
+    std::shared_ptr<Cube> leftCube = std::make_shared<Cube>(color);
+    leftCube->Translate(XMVectorSet(-10.0f, 10.0f, 0.0f, 1.0f));
+
+    if (FAILED(mainScene->AddRenderable(L"LeftCube", leftCube)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"LeftCube", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"LeftCube", L"PhongShader")))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<Cube> rightCube = std::make_shared<Cube>(color);
+    rightCube->Translate(XMVectorSet(20.0f, 1.0f, 10.0f, 1.0f));
+
+    if (FAILED(mainScene->AddRenderable(L"RightCube", rightCube)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"RightCube", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"RightCube", L"PhongShader")))
+    {
+        return 0;
+    }
+
+    leftCube->AddMaterial(voxelMaterial);
+    rightCube->AddMaterial(voxelMaterial);
 
     if (FAILED(game->GetRenderer()->AddScene(L"VoxelMap", mainScene)))
     {
