@@ -12,10 +12,9 @@
 /*--------------------------------------------------------------------
   TODO: Declare texture array and sampler state array for diffuse texture and normal texture (remove the comment)
 --------------------------------------------------------------------*/
-Texture2D diffuseTexture : register(t0);
-Texture2D normalTexture : register(t1);
-SamplerState diffuseSampler : register(s0);
-SamplerState normalSampler : register(s1);
+
+Texture2D aTextures[2] : register(t0);
+SamplerState aSamplers[2] : register(s0);
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -140,7 +139,8 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
 	if (HasNormalMap)
 	{
 		//sample the pixel in the normal map
-		float4 bumpMap = normalTexture.Sample(normalSampler, input.TexCoord);
+		//float4 bumpMap = normalTexture.Sample(normalSampler, input.TexCoord);
+		float4 bumpMap = aTextures[1].Sample(aSamplers[1], input.TexCoord);
 		
 		//expand the range of the normal value to -1~1
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
@@ -168,5 +168,5 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
 		diffuse += saturate(dot(normal, lightDirection)) * LightColors[j].xyz;
 	}
 
-	return float4(ambient + diffuse, 1.0f) * diffuseTexture.Sample(diffuseSampler, input.TexCoord);
+	return float4(ambient + diffuse, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
 }

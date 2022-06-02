@@ -31,14 +31,12 @@ void RotatingPointLight::Update(_In_ FLOAT deltaTime)
 {
     XMMATRIX rotate = XMMatrixRotationY(-2.0f * deltaTime);
 
-    const XMFLOAT4 at = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-
     XMVECTOR position = XMLoadFloat4(&m_position);
     position = XMVector3Transform(position, rotate);
     XMStoreFloat4(&m_position, position);
     
-    m_eye = XMLoadFloat4(&m_position);
-    m_at = XMLoadFloat4(&at);
+    m_eye = position;
+    m_at = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
     m_up = DEFAULT_UP;
 
     m_view = XMMatrixLookAtLH(m_eye, m_at, m_up);
