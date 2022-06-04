@@ -20,6 +20,7 @@
     <ClInclude Include="Renderer\InstancedRenderable.h" />
     <ClInclude Include="Renderer\Renderable.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Renderer\Skybox.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\Voxel.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\ShadowVertexShader.h" />
     <ClInclude Include="Shader\SkinningVertexShader.h" />
+    <ClInclude Include="Shader\SkyMapVertexShader.h" />
     <ClInclude Include="Shader\VertexShader.h" />
     <ClInclude Include="Texture\DDSTextureLoader.h" />
     <ClInclude Include="Texture\Material.h" />
@@ -50,12 +52,14 @@
     <ClCompile Include="Renderer\InstancedRenderable.cpp" />
     <ClCompile Include="Renderer\Renderable.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\Skybox.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\Voxel.cpp" />
     <ClCompile Include="Shader\PixelShader.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="Shader\ShadowVertexShader.cpp" />
     <ClCompile Include="Shader\SkinningVertexShader.cpp" />
+    <ClCompile Include="Shader\SkyMapVertexShader.cpp" />
     <ClCompile Include="Shader\VertexShader.cpp" />
     <ClCompile Include="Texture\DDSTextureLoader.cpp" />
     <ClCompile Include="Texture\Material.cpp" />

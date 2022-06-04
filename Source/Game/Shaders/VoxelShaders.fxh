@@ -4,7 +4,7 @@
 // Copyright (c) Kyung Hee University.
 //--------------------------------------------------------------------------------------
 
-#define NUM_LIGHTS (2)
+#define NUM_LIGHTS (1)
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -54,12 +54,22 @@ cbuffer cbChangesEveryFrame : register(b2)
   Cbuffer:  cbLights
   Summary:  Constant buffer used for shading
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-cbuffer cbLights : register(b3)
+//cbuffer cbLights : register(b3)
+//{
+//	float4 LightPositions[NUM_LIGHTS];
+//	float4 LightColors[NUM_LIGHTS];
+//};
+struct PointLight
 {
-	float4 LightPositions[NUM_LIGHTS];
-	float4 LightColors[NUM_LIGHTS];
+	float4 Position;
+	float4 Color;
+	float4 AttenuationDistance;
 };
 
+cbuffer cbLights : register(b3)
+{
+	PointLight PointLights[NUM_LIGHTS];
+};
 //--------------------------------------------------------------------------------------
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Struct:   VS_INPUT
@@ -154,19 +164,28 @@ float4 PSVoxel(PS_INPUT input) : SV_TARGET
 	
    //ambient
 	float3 ambient = float3(0.f, 0.f, 0.f);
-
+	float3 diffuse = float3(0.f, 0.f, 0.f);
+	
+	float3 viewDir = normalize(CameraPosition.xyz - input.WorldPosition);
+	
 	for (uint i = 0; i < NUM_LIGHTS; ++i)
 	{
-		ambient += float3(0.2f, 0.2f, 0.2f) * LightColors[i].xyz;
-	}
+		float3 lightDirection = normalize(PointLights[i].Position.xyz - input.WorldPosition);
+		float3 reflectDirection = reflect(-lightDirection, normal);
 
-   //diffuse shading
-	float3 diffuse = float3(0.f, 0.f, 0.f);
-	for (uint j = 0; j < NUM_LIGHTS; ++j)
-	{
-		float3 lightDirection = normalize(LightPositions[j].xyz - input.WorldPosition);
-		diffuse += saturate(dot(normal, lightDirection)) * LightColors[j].xyz;
+		//get distance
+		float distance = PointLights[i].Position.xyz - input.WorldPosition;
+		//get r^2
+		float r = dot(distance, distance);
+		
+		//get r0^2
+		float r0 = PointLights[i].AttenuationDistance.z;
+		
+		//get attenuation
+		float attenuation = r0 / (r + 0.000001f);
+		
+		ambient += float3(0.1f, 0.1f, 0.1f) * PointLights[i].Color.xyz * attenuation;
+		diffuse += saturate(dot(normal, lightDirection)) * PointLights[i].Color.xyz * attenuation;
 	}
-
 	return float4(ambient + diffuse, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
 }

@@ -114,6 +114,12 @@
     <ClInclude Include="Texture\RenderTexture.h">
       <Filter>Source Files\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="Shader\SkyMapVertexShader.h">
+      <Filter>Source Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Skybox.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="directx.ico">
@@ -185,6 +191,12 @@
     </ClCompile>
     <ClCompile Include="Texture\RenderTexture.cpp">
       <Filter>Source Files\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\SkyMapVertexShader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Skybox.cpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

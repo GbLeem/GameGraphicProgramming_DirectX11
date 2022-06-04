@@ -60,19 +60,27 @@ namespace library
 		XMMATRIX BoneTransforms[MAX_NUM_BONES];
 	};
 
-	struct CBLights
+	struct Lights
 	{
-		XMFLOAT4 LightPositions[NUM_LIGHTS];
-		XMFLOAT4 LightColors[NUM_LIGHTS];
-		XMMATRIX LightViews[NUM_LIGHTS];
-		XMMATRIX LightProjections[NUM_LIGHTS];
+		XMFLOAT4 Position;
+		XMFLOAT4 Color;
+		XMFLOAT4 AttenuationDistance;
 	};
 
-	struct CBShadowMatrix
+	struct CBLights
+	{
+		//XMFLOAT4 LightPositions[NUM_LIGHTS];
+		//XMFLOAT4 LightColors[NUM_LIGHTS];
+		//XMMATRIX LightViews[NUM_LIGHTS];
+		//XMMATRIX LightProjections[NUM_LIGHTS];
+		Lights PointLights[NUM_LIGHTS];
+	};
+
+	/*struct CBShadowMatrix
 	{
 		XMMATRIX World;
 		XMMATRIX View;
 		XMMATRIX Projection;
 		BOOL IsVoxel;
-	};
+	};*/
 }
