@@ -11,7 +11,7 @@
 /*--------------------------------------------------------------------
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
-Texture2D txDiffuse : register(t0);
+TextureCube txDiffuse : register(t0);
 SamplerState clampSampler : register(s0);
 
 //--------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 --------------------------------------------------------------------*/
 struct PS_INPUT
 {
-	float4 Position : POSITION;
+	float4 Position : SV_Position;
 	float3 TexCoord : TEXCOORD0;
 };
 //--------------------------------------------------------------------------------------
@@ -110,5 +110,5 @@ PS_INPUT VSCubeMap(VS_INPUT input)
 --------------------------------------------------------------------*/
 float4 PSCubeMap(PS_INPUT input) : SV_Target
 {
-	return txDiffuse.Sample(clampSampler, input.TexCoord.xy);
+	return txDiffuse.Sample(clampSampler, input.TexCoord);
 }

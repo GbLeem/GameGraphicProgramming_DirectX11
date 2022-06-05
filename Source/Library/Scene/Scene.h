@@ -44,7 +44,6 @@ namespace library
         HRESULT AddVertexShader(_In_ PCWSTR pszVertexShaderName, _In_ const std::shared_ptr<VertexShader>& vertexShader);
         HRESULT AddPixelShader(_In_ PCWSTR pszPixelShaderName, _In_ const std::shared_ptr<PixelShader>& pixelShader);
         HRESULT AddSkyBox(_In_ const std::shared_ptr<Skybox>& skybox);
-        //HRESULT AddMaterial(_In_ const std::shared_ptr<Material>& material);
 
         void Update(_In_ FLOAT deltaTime);
 

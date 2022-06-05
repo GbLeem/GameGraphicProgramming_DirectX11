@@ -215,10 +215,6 @@ namespace library
             {
                 return hr;
             }
-           /* for (int i = 0; i < it->second->GetNumMaterials(); ++i)
-            {
-                AddMaterial(it->second->GetMaterial(i));
-            }*/
         }
         
         if (m_skyBox)
@@ -390,18 +386,6 @@ namespace library
 
         return S_OK;
     }
-
-    /*HRESULT Scene::AddMaterial(_In_ const std::shared_ptr<Material>& material)
-    {
-        if (m_materials.contains(material->GetName()))
-        {
-            return E_FAIL;
-        }
-
-        m_materials[material->GetName()] = material;
-
-        return S_OK;
-    }*/
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Scene::AddSkyBox

@@ -171,31 +171,6 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     void Model::Update(_In_ FLOAT deltaTime)
     {
-        //m_timeSinceLoaded += deltaTime;
-
-        //if (m_pScene->HasAnimations())
-        //{
-        //    //calculate the current animation time
-        //    XMMATRIX identity = XMMatrixIdentity();
-        //    FLOAT ticksPerSecond = static_cast<FLOAT>(m_pScene->mAnimations[0]->mTicksPerSecond != 0.0f ?
-        //        m_pScene->mAnimations[0]->mTicksPerSecond : 25.0f);
-        //    FLOAT timeInTicks = m_timeSinceLoaded * ticksPerSecond;
-        //    FLOAT animationTimeTicks = fmod(timeInTicks, static_cast<FLOAT>(m_pScene->mAnimations[0]->mDuration));
-
-        //    if (m_pScene->mRootNode)
-        //    {
-        //        readNodeHierarchy(animationTimeTicks, m_pScene->mRootNode, identity);
-
-        //        //Resize m_aTransforms same as m_aBoneInfo
-        //        m_aTransforms.resize(m_aBoneInfo.size());
-
-        //        //Store each final transformations in the bone information to the m_aTransforms
-        //        for (UINT i = 0u; i < m_aBoneInfo.size(); ++i)
-        //        {
-        //            m_aTransforms[i] = m_aBoneInfo[i].FinalTransformation;
-        //        }
-        //    }
-        //}
         UNREFERENCED_PARAMETER(deltaTime);
     }
 
