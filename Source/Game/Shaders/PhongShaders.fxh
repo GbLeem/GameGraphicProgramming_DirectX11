@@ -152,9 +152,9 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 		float3 reflectDirection = reflect(-lightDirection, normal);
 
 		//get distance
-		float distance = PointLights[i].Position.xyz - input.WorldPosition;
+	
 		//get r^2
-		float r = dot(distance, distance);
+		float r = dot(input.WorldPosition - PointLights[i].Position.xyz, input.WorldPosition - PointLights[i].Position.xyz);
 		
 		//get r0^2
 		float r0 = PointLights[i].AttenuationDistance.z;
@@ -162,9 +162,9 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 		//get attenuation
 		float attenuation = r0 / (r + 0.000001f);
 		
-		ambient = float3(0.1f, 0.1f, 0.1f) * PointLights[i].Color.xyz * attenuation;
-		diffuse = saturate(dot(normal, lightDirection))* PointLights[i].Color.xyz * attenuation;
-		specular = pow(saturate(dot(viewDir, reflectDirection)), 20.f) * PointLights[i].Color.xyz * attenuation;
+		ambient += float3(0.1f, 0.1f, 0.1f) * PointLights[i].Color.xyz * attenuation;
+		diffuse += saturate(dot(normal, lightDirection)) * PointLights[i].Color.xyz * attenuation;
+		specular += pow(saturate(dot(viewDir, reflectDirection)), 20.f) * PointLights[i].Color.xyz * attenuation;
 	}
 	
 	return float4(ambient + diffuse + specular, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);

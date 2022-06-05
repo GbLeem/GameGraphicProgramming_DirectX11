@@ -236,11 +236,11 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
     // Environment Map
-    /*std::shared_ptr<library::VertexShader> environmentMapVertexShader = std::make_shared<library::VertexShader>(L"Shaders/Shaders.fxh", "VSEnvironmentMap", "vs_5_0");
+    std::shared_ptr<library::VertexShader> environmentMapVertexShader = std::make_shared<library::VertexShader>(L"Shaders/CubeMap.fxh", "VSEnvironmentMap", "vs_5_0");
     if (FAILED(mainScene->AddVertexShader(L"EnvironmentMapShader", environmentMapVertexShader)))
     {
         return 0;
-    }*/
+    }
 
     // Phong
     std::shared_ptr<library::PixelShader> phongPixelShader = std::make_shared<library::PixelShader>(L"Shaders/PhongShaders.fxh", "PSPhong", "ps_5_0");
@@ -267,11 +267,11 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
     // Environment Map
-    /*std::shared_ptr<library::PixelShader> environmentMapPixelShader = std::make_shared<library::PixelShader>(L"Shaders/Shaders.fxh", "PSEnvironmentMap", "ps_5_0");
+    std::shared_ptr<library::PixelShader> environmentMapPixelShader = std::make_shared<library::PixelShader>(L"Shaders/CubeMap.fxh", "PSEnvironmentMap", "ps_5_0");
     if (FAILED(mainScene->AddPixelShader(L"EnvironmentMapShader", environmentMapPixelShader)))
     {
         return 0;
-    }*/
+    }
 
     if (FAILED(mainScene->SetVertexShaderOfVoxel(L"VoxelShader")))
     {
@@ -293,6 +293,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     //add model
     std::shared_ptr<library::Model> nanosuit = std::make_shared<library::Model>(L"Content/Nanosuit/nanosuit.obj");
+    nanosuit->Translate(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
 
     if (FAILED(mainScene->AddModel(L"Nanosuit", nanosuit)))
     {
@@ -349,6 +350,22 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
     if (FAILED(mainScene->SetPixelShaderOfRenderable(L"PointLight", L"LightShader")))
+    {
+        return 0;
+    }
+
+    //For environment mapping
+    std::shared_ptr<Cube> CubeEnv = std::make_shared<Cube>(color);
+    CubeEnv->Translate(XMVectorSet(10.0f, 0.0f, 0.0f, 0.0f));
+    if (FAILED(mainScene->AddRenderable(L"Cube", CubeEnv)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"Cube", L"EnvironmentMapShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"Cube", L"EnvironmentMapShader")))
     {
         return 0;
     }

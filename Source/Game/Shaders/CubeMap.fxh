@@ -11,9 +11,10 @@
 /*--------------------------------------------------------------------
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
+#define NUM_LIGHTS (1)
+
 TextureCube txDiffuse : register(t0);
 SamplerState clampSampler : register(s0);
-
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -57,6 +58,18 @@ cbuffer cbChangesEveryFrame : register(b2)
 	matrix World;
 	float4 OutputColor;
 };
+
+struct PointLight
+{
+	float4 Position;
+	float4 Color;
+	float4 AttenuationDistance;
+};
+
+cbuffer cbLights : register(b3)
+{
+	PointLight PointLights[NUM_LIGHTS];
+};
 //--------------------------------------------------------------------------------------
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Struct:   VS_INPUT
@@ -69,6 +82,13 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 struct VS_INPUT
 {
 	float4 Position : POSITION;
+};
+
+struct VS_INPUT_ENV
+{
+	float4 Pos : POSITION;
+	float3 Normal : NORMAL;
+	float2 Tex : TEXCOORD0;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -85,6 +105,15 @@ struct PS_INPUT
 	float4 Position : SV_Position;
 	float3 TexCoord : TEXCOORD0;
 };
+
+struct PS_INPUT_ENV
+{
+	float4 Pos : SV_POSITION;
+	float2 Tex : TEXCOORD0;
+	float3 Normal : NORMAL;
+	float3 WorldPosition : WORLDPOS;
+
+};
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
@@ -97,9 +126,26 @@ PS_INPUT VSCubeMap(VS_INPUT input)
 	output.Position = mul(input.Position, World);
 	output.Position = mul(output.Position, View);
 	output.Position = mul(output.Position, Projection);
-	
+
 	output.TexCoord = input.Position.xyz;
+
+	return output;
+}
+
+PS_INPUT_ENV VSEnvironmentMap(VS_INPUT_ENV input)
+{
+	PS_INPUT_ENV output = (PS_INPUT_ENV) 0;
 	
+	output.Pos = mul(input.Pos, World);
+	output.Pos = mul(output.Pos, View);
+	output.Pos = mul(output.Pos, Projection);
+    
+	output.WorldPosition = mul(input.Pos, World);
+
+	output.Tex = input.Tex;
+	
+	output.Normal = normalize(mul(float4(input.Normal, 0.f), World).xyz);
+    
 	return output;
 }
 //--------------------------------------------------------------------------------------
@@ -111,4 +157,14 @@ PS_INPUT VSCubeMap(VS_INPUT input)
 float4 PSCubeMap(PS_INPUT input) : SV_Target
 {
 	return txDiffuse.Sample(clampSampler, input.TexCoord);
+}
+
+float4 PSEnvironmentMap(PS_INPUT_ENV input):SV_Target
+{
+	float3 reflectDirection = float3(0.f, 0.f, 0.f);
+	float3 incident = normalize(input.WorldPosition - CameraPosition.xyz);
+	
+	reflectDirection = reflect(incident, input.Normal);
+	
+	return txDiffuse.Sample(clampSampler, reflectDirection.xyz);
 }
