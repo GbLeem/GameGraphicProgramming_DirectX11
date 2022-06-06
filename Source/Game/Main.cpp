@@ -291,7 +291,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
     
-    //add sponza model for light attenuation
+    //-----------------------------------for light attenuation---------------------------------------------------
     //Use Dabrovic Sponza model download from https://casual-effects.com/data/ 
     std::shared_ptr<library::Model> sponza = std::make_shared<library::Model>(L"Content/sponza/sponza.obj");
     if (FAILED(mainScene->AddModel(L"Sponza", sponza)))
@@ -306,8 +306,11 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
+    //-----------------------------------for light attenuation---------------------------------------------------
 
-    //For environment mapping model
+
+
+    //-----------------------------------For environment mapping model---------------------------------------------------
    /* std::shared_ptr<library::Model> sphere = std::make_shared<library::Model>(L"Content/Common/Sphere.obj");
     if (FAILED(mainScene->AddModel(L"sphere", sphere)))
     {
@@ -321,6 +324,22 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }*/
+
+    //Use sportsCar model download from https://casual-effects.com/data/ 
+    /*std::shared_ptr<library::Model> car = std::make_shared<library::Model>(L"Content/sportsCar/sportsCar.obj");
+    if (FAILED(mainScene->AddModel(L"car", car)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfModel(L"car", L"EnvironmentMapShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfModel(L"car", L"EnvironmentMapShader")))
+    {
+        return 0;
+    }*/
+    //-----------------------------------For environment mapping model---------------------------------------------------
 
     XMFLOAT4 color;
     XMStoreFloat4(&color, Colors::Orange);
