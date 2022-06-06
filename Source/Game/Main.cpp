@@ -290,57 +290,49 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
-
-    //add model
-    std::shared_ptr<library::Model> nanosuit = std::make_shared<library::Model>(L"Content/Nanosuit/nanosuit.obj");
-    nanosuit->Translate(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
-
-    if (FAILED(mainScene->AddModel(L"Nanosuit", nanosuit)))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetVertexShaderOfModel(L"Nanosuit", L"PhongShader")))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetPixelShaderOfModel(L"Nanosuit", L"PhongShader")))
-    {
-        return 0;
-    }
-
     
-        //std::shared_ptr<library::Model> sponza = std::make_shared<library::Model>(L"Content/Sponza/sponza.obj");
-        //sponza->Scale(0.1f, 0.1f, 0.1f);
-        //if (FAILED(mainScene->AddModel(L"Sponza", sponza)))
-        //{
-        //    return 0;
-        //}
-        //if (FAILED(mainScene->SetVertexShaderOfModel(L"Sponza", L"PhongShader")))
-        ////if (FAILED(mainScene->SetVertexShaderOfModel(L"Sponza", L"EnvironmentMapShader")))
-        //{
-        //    return 0;
-        //}
-        //if (FAILED(mainScene->SetPixelShaderOfModel(L"Sponza", L"PhongShader")))
-        ////if (FAILED(mainScene->SetPixelShaderOfModel(L"Sponza", L"EnvironmentMapShader")))
-        //{
-        //    return 0;
-        //}
+    //add sponza model for light attenuation
+    //Use Dabrovic Sponza model download from https://casual-effects.com/data/ 
+    std::shared_ptr<library::Model> sponza = std::make_shared<library::Model>(L"Content/sponza/sponza.obj");
+    if (FAILED(mainScene->AddModel(L"Sponza", sponza)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfModel(L"Sponza", L"PhongShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfModel(L"Sponza", L"PhongShader")))
+    {
+        return 0;
+    }
+
+    //For environment mapping model
+   /* std::shared_ptr<library::Model> sphere = std::make_shared<library::Model>(L"Content/Common/Sphere.obj");
+    if (FAILED(mainScene->AddModel(L"sphere", sphere)))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetVertexShaderOfModel(L"sphere", L"EnvironmentMapShader")))
+    {
+        return 0;
+    }
+    if (FAILED(mainScene->SetPixelShaderOfModel(L"sphere", L"EnvironmentMapShader")))
+    {
+        return 0;
+    }*/
 
     XMFLOAT4 color;
     XMStoreFloat4(&color, Colors::Orange);
 
-    std::shared_ptr<library::PointLight> directionalLight = std::make_shared<library::PointLight>(
-        XMFLOAT4(0.f, 30.f, 0.f, 1.0f),
-        color,
-        45.0f
-        );
+    std::shared_ptr<library::PointLight> directionalLight = std::make_shared<library::PointLight>(XMFLOAT4(0.f, 10.f, 0.f, 1.0f), color, 10.0f);
     if (FAILED(mainScene->AddPointLight(0, directionalLight)))
     {
         return 0;
     }
 
     std::shared_ptr<Cube> pointLight = std::make_shared<Cube>(color);
-    pointLight->Translate(XMVectorSet(0.0f, 30.0f, 0.0f, 0.0f));
+    pointLight->Translate(XMVectorSet(0.0f, 10.0f, 0.0f, 0.0f));
     if (FAILED(mainScene->AddRenderable(L"PointLight", pointLight)))
     {
         return 0;
@@ -354,33 +346,6 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    //For environment mapping
-    std::shared_ptr<Cube> CubeEnv = std::make_shared<Cube>(color);
-    CubeEnv->Translate(XMVectorSet(10.0f, 0.0f, 0.0f, 0.0f));
-    if (FAILED(mainScene->AddRenderable(L"Cube", CubeEnv)))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"Cube", L"EnvironmentMapShader")))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"Cube", L"EnvironmentMapShader")))
-    {
-        return 0;
-    }
-
-    /*XMStoreFloat4(&color, Colors::White);
-    std::shared_ptr<RotatingPointLight> rotatingDirectionalLight = std::make_shared<RotatingPointLight>(
-        XMFLOAT4(0.0f, 300.0f, 0.0f, 1.0f),
-        color,
-        400.0f
-        );
-    if (FAILED(mainScene->AddPointLight(1, rotatingDirectionalLight)))
-    {
-        return 0;
-    }*/
-
     if (FAILED(game->GetRenderer()->AddScene(L"VoxelMap", mainScene)))
     {
         return 0;
@@ -390,20 +355,6 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
-
-    /*std::shared_ptr<RotatingCube> rotatingCube = std::make_shared<RotatingCube>(color);
-    if (FAILED(mainScene->AddRenderable(L"RotatingCube", rotatingCube)))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetVertexShaderOfRenderable(L"RotatingCube", L"LightShader")))
-    {
-        return 0;
-    }
-    if (FAILED(mainScene->SetPixelShaderOfRenderable(L"RotatingCube", L"LightShader")))
-    {
-        return 0;
-    }*/
 
     if (FAILED(game->Initialize(hInstance, nCmdShow)))
     {

@@ -150,8 +150,6 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 	{
 		float3 lightDirection = normalize(PointLights[i].Position.xyz - input.WorldPosition);
 		float3 reflectDirection = reflect(-lightDirection, normal);
-
-		//get distance
 	
 		//get r^2
 		float r = dot(input.WorldPosition - PointLights[i].Position.xyz, input.WorldPosition - PointLights[i].Position.xyz);
