@@ -7,7 +7,7 @@
 ### LAB03. Draw Triangle
 ![Game exe Screenshot 2022 07 25 - 16 34 09 37](https://user-images.githubusercontent.com/86725870/210038233-b15193ca-d736-4a6b-8d93-54934b0047c6.png)
 ### LAB04. Draw Cube and Move Cube
-![Game exe Screenshot 2022 07 25 - 16 35 18 36](https://user-images.githubusercontent.com/86725870/210038239-7ce66fac-9bbe-4793-9019-ad87062988c8.png)
+https://user-images.githubusercontent.com/86725870/210038406-39a6267d-a4c5-4380-ac95-c6e00da9b373.mp4
 ### ASS01. Camera Movement
 ### LAB05. Texture
 ### LAB06. Shader
